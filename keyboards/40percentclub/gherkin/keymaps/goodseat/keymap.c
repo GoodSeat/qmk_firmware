@@ -79,3 +79,77 @@ combo_t key_combos[] = {
   [WE_GRV]  = COMBO(we_combo, KC_GRV),
   [QP_TGL]  = COMBO(qp_combo, TG(4))
 };
+
+
+
+// TODO:
+// LT(1, KC_V) LT(1, KC_M)  LT(1, KC_MINS) LT(1, KC_LBRC) LT(1, KC_LBRC)
+// LT(2, KC_F) LT(2, KC_4)
+// LT(3, KC_D) LT(3, KC_3)
+// LT(5, KC_V) LT(5, KC_M)  LT(5, KC_MINS) LT(5, KC_LBRC) LT(5, KC_LBRC)
+// LT(6, KC_F) LT(6, KC_4)
+// LT(7, KC_D) LT(7, KC_3)
+//
+// LCTL_T(KC_A) LCTL_T(KC_1) LCTL_T(KC_TAB)
+// LSFT_T(KC_Z) LSFT_T(KC_F11)
+// RCTL_T(KC_SCLN) RCTL_T(KC_0)
+// RSFT_T(KC_SLSH) RSFT_T(KC_APP)
+//
+// LALT_T(KC_X) LALT_T(KC_F12) LALT_T(KC_F12)
+// LGUI_T(KC_C) LGUI_T(KC_GRV) LGUI_T(KC_GRV)
+// RGUI_T(KC_COMM) RGUI_T(KC_RBRC)
+// RALT_T(KC_DOT) RALT_T(KC_BSLS) RALT_T(KC_APP )
+
+static bool rolling_to_mod_pending = false;
+static uint16_t rolling_to_mod_judge_timeS = 0;
+#define ROLLING_TO_MOD_TIMEOUT 50 // wait time for pending rolling to mod.(ms)
+
+
+void resolve_rolling_to_mod_pending(void) {
+    if (rolling_to_mod_pending) {
+        // send tapping because no other keys pressed till time out.
+        tap_code(KC_SLSH);
+        rolling_to_mod_pending = false;
+    }
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+
+    switch (keycode) {
+        case  RSFT_T(KC_SLSH):
+            if (record->event.pressed) {
+                // if exist pending, resolve this timing.
+                resolve_rolling_to_mod_pending();
+                register_code(KC_RSFT); // press Shift.
+            } else {
+                unregister_code(KC_RSFT); // first, release Shift.
+                // if other key is pressed with this key, this key is maybe Mod.
+                if (record->tap.count > 0) {
+                    rolling_to_mod_pending = true;
+                    rolling_to_mod_judge_timeS = timer_read();
+                }
+            }
+            return false; // override QMK's default action.
+
+        default:
+            if (record->event.pressed) {
+                // resolve pending when other key pressed.
+                resolve_rolling_to_mod_pending();
+            } else {
+                // if anykey released when any Mod-Tap key is pending, pending key is MOD.
+                if (rolling_to_mod_pending && keycode != RSFT_T(KC_SLSH)) {
+                    register_weak_mods(MOD_RSFT); // press Shift.
+                    rolling_to_mod_pending = false;
+                }
+            }
+            break;
+    }
+
+    return true;
+}
+
+void matrix_scan_user(void) {
+  if (rolling_to_mod_pending && timer_elapsed(rolling_to_mod_judge_timeS) > ROLLING_TO_MOD_TIMEOUT) {
+      resolve_rolling_to_mod_pending();
+  }
+}
