@@ -97,38 +97,38 @@ combo_t key_combos[] = {
 // =================================================================================
 
 const uint16_t keycode_LCTL_ALL[][3] = {
-      [0] = { LCTL_T(KC_A  ), KC_A  , MOD_LCTL }
-    , [1] = { LCTL_T(KC_1  ), KC_1  , MOD_LCTL }
-    , [2] = { LCTL_T(KC_TAB), KC_TAB, MOD_LCTL }
+//      [0] = { LCTL_T(KC_A  ), KC_A  , MOD_LCTL }
+//    , [1] = { LCTL_T(KC_1  ), KC_1  , MOD_LCTL }
+//    , [2] = { LCTL_T(KC_TAB), KC_TAB, MOD_LCTL }
 };
 const uint16_t keycode_LSFT_ALL[][3] = {
       [0] = { LSFT_T(KC_Z  ), KC_Z  , MOD_LSFT }
     , [1] = { LSFT_T(KC_F11), KC_F11, MOD_LSFT }
 };
 const uint16_t keycode_LALT_ALL[][3] = {
-      [0] = { LALT_T(KC_X  ), KC_X  , MOD_LALT }
-    , [1] = { LALT_T(KC_F12), KC_F12, MOD_LALT }
+//      [0] = { LALT_T(KC_X  ), KC_X  , MOD_LALT }
+//    , [1] = { LALT_T(KC_F12), KC_F12, MOD_LALT }
 };
 const uint16_t keycode_LGUI_ALL[][3] = {
-      [0] = { LGUI_T(KC_C  ), KC_C  , MOD_LGUI }
-    , [1] = { LGUI_T(KC_GRV), KC_GRV, MOD_LGUI }
+//      [0] = { LGUI_T(KC_C  ), KC_C  , MOD_LGUI }
+//    , [1] = { LGUI_T(KC_GRV), KC_GRV, MOD_LGUI }
 };
 const uint16_t keycode_RCTL_ALL[][3] = {
-      [0] = { RCTL_T(KC_SCLN), KC_SCLN, MOD_RCTL }
-    , [1] = { RCTL_T(KC_0   ), KC_0   , MOD_RCTL }
+//      [0] = { RCTL_T(KC_SCLN), KC_SCLN, MOD_RCTL }
+//    , [1] = { RCTL_T(KC_0   ), KC_0   , MOD_RCTL }
 };
 const uint16_t keycode_RSFT_ALL[][3] = {
       [0] = { RSFT_T(KC_SLSH), KC_SLSH, MOD_RSFT }
     , [1] = { RSFT_T(KC_APP ), KC_APP , MOD_RSFT }
 };
 const uint16_t keycode_RALT_ALL[][3] = {
-      [0] = { RALT_T(KC_DOT ), KC_DOT , MOD_RALT }
-    , [1] = { RALT_T(KC_BSLS), KC_BSLS, MOD_RALT }
-    , [2] = { RALT_T(KC_APP ), KC_APP , MOD_RALT }
+//      [0] = { RALT_T(KC_DOT ), KC_DOT , MOD_RALT }
+//    , [1] = { RALT_T(KC_BSLS), KC_BSLS, MOD_RALT }
+//    , [2] = { RALT_T(KC_APP ), KC_APP , MOD_RALT }
 };
 const uint16_t keycode_RGUI_ALL[][3] = {
-      [0] = { RGUI_T(KC_COMM), KC_COMM, MOD_RGUI }
-    , [1] = { RGUI_T(KC_RBRC), KC_RBRC, MOD_RGUI }
+//      [0] = { RGUI_T(KC_COMM), KC_COMM, MOD_RGUI }
+//    , [1] = { RGUI_T(KC_RBRC), KC_RBRC, MOD_RGUI }
 };
 const uint16_t keycode_LT1_ALL [][3] = {
       [0] = { LT(1, KC_V   ), KC_V    , OSL(1) }
@@ -304,7 +304,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     SOLVE_ROLLING_TO_MOD_PENDING(PENDING_MOD_LGUI, keycode_LGUI_ALL, KC_LGUI);
     SOLVE_ROLLING_TO_MOD_PENDING(PENDING_MOD_RCTL, keycode_RCTL_ALL, KC_RCTL);
     SOLVE_ROLLING_TO_MOD_PENDING(PENDING_MOD_RSFT, keycode_RSFT_ALL, KC_RSFT);
-    SOLVE_ROLLING_TO_MOD_PENDING(PENDING_MOD_LALT, keycode_RALT_ALL, KC_RALT);
+    SOLVE_ROLLING_TO_MOD_PENDING(PENDING_MOD_RALT, keycode_RALT_ALL, KC_RALT);
     SOLVE_ROLLING_TO_MOD_PENDING(PENDING_MOD_RGUI, keycode_RGUI_ALL, KC_RGUI);
 
     SOLVE_ROLLING_TO_LAY_PENDING(PENDING_MOD_L1,   keycode_LT1_ALL , 1);
@@ -321,7 +321,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     OTHER_ROLLING_TO_MOD_PENDING(PENDING_MOD_LGUI, keycode_LGUI_ALL);
     OTHER_ROLLING_TO_MOD_PENDING(PENDING_MOD_RCTL, keycode_RCTL_ALL);
     OTHER_ROLLING_TO_MOD_PENDING(PENDING_MOD_RSFT, keycode_RSFT_ALL);
-    OTHER_ROLLING_TO_MOD_PENDING(PENDING_MOD_LALT, keycode_RALT_ALL);
+    OTHER_ROLLING_TO_MOD_PENDING(PENDING_MOD_RALT, keycode_RALT_ALL);
     OTHER_ROLLING_TO_MOD_PENDING(PENDING_MOD_RGUI, keycode_RGUI_ALL);
 
     OTHER_ROLLING_TO_LAY_PENDING(PENDING_MOD_L1,   keycode_LT1_ALL);
