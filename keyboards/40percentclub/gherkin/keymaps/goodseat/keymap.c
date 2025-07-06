@@ -4,6 +4,9 @@
 // key maps
 // =================================================================================
 
+#define KC_HENK KC_INT4
+#define KC_MHEN KC_INT5
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [0] = LAYOUT_ortho_3x10(
@@ -26,7 +29,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [3] = LAYOUT_ortho_3x10(
            KC_ESC , _______       , _______       , _______       ,  KC_PAUS, KC_ESC ,       KC_GRV  ,        KC_MINS ,        KC_EQL  ,        KC_BSPC ,
-           KC_LCTL, XXXXXXX       , XXXXXXX       , _______       ,  _______, XXXXXXX,       KC_SPC  ,        XXXXXXX ,        XXXXXXX ,        KC_ENT  ,
+           KC_LCTL, XXXXXXX       , XXXXXXX       , _______       ,  _______, KC_HENK,       KC_SPC  ,        KC_MHEN ,        KC_INS  ,        KC_ENT  ,
            KC_LSFT, KC_LALT       , KC_LGUI       , _______       ,  KC_CAPS, KC_PSCR,       KC_SCRL ,        KC_RGUI ,        KC_RALT ,        KC_RSFT
   ),
 
@@ -50,12 +53,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [7] = LAYOUT_ortho_3x10(
              KC_RSFT ,        KC_RALT ,        KC_RGUI ,       KC_SCRL , KC_PSCR,  KC_CAPS, _______       , KC_LGUI       , KC_LALT       ,      KC_LSFT ,
-             KC_ENT  ,        XXXXXXX ,        XXXXXXX ,       KC_SPC  , XXXXXXX,  _______, _______       , XXXXXXX       , XXXXXXX       ,      KC_LCTL ,
+             KC_ENT  ,        KC_INS  ,        KC_MHEN ,       KC_SPC  , KC_HENK,  _______, _______       , XXXXXXX       , XXXXXXX       ,      KC_LCTL ,
              KC_BSPC ,        KC_EQL  ,        KC_MINS ,       KC_GRV  , KC_ESC ,  KC_PAUS, _______       , _______       , _______       ,      KC_ESC
   )
 
 };
-
 
 // =================================================================================
 // combos
