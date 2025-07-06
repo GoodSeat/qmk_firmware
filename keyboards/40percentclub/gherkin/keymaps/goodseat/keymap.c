@@ -1,5 +1,9 @@
 #include QMK_KEYBOARD_H
 
+// =================================================================================
+// key maps
+// =================================================================================
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [0] = LAYOUT_ortho_3x10(
@@ -52,6 +56,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 };
 
+
+// =================================================================================
+// combos
+// =================================================================================
+
 enum combos {
   JK_SPC,
   KL_ENT,
@@ -81,75 +90,255 @@ combo_t key_combos[] = {
 };
 
 
+// =================================================================================
+// rolling press to hold
+// =================================================================================
 
-// TODO:
-// LT(1, KC_V) LT(1, KC_M)  LT(1, KC_MINS) LT(1, KC_LBRC) LT(1, KC_LBRC)
-// LT(2, KC_F) LT(2, KC_4)
-// LT(3, KC_D) LT(3, KC_3)
-// LT(5, KC_V) LT(5, KC_M)  LT(5, KC_MINS) LT(5, KC_LBRC) LT(5, KC_LBRC)
-// LT(6, KC_F) LT(6, KC_4)
-// LT(7, KC_D) LT(7, KC_3)
-//
-// LCTL_T(KC_A) LCTL_T(KC_1) LCTL_T(KC_TAB)
-// LSFT_T(KC_Z) LSFT_T(KC_F11)
-// RCTL_T(KC_SCLN) RCTL_T(KC_0)
-// RSFT_T(KC_SLSH) RSFT_T(KC_APP)
-//
-// LALT_T(KC_X) LALT_T(KC_F12) LALT_T(KC_F12)
-// LGUI_T(KC_C) LGUI_T(KC_GRV) LGUI_T(KC_GRV)
-// RGUI_T(KC_COMM) RGUI_T(KC_RBRC)
-// RALT_T(KC_DOT) RALT_T(KC_BSLS) RALT_T(KC_APP )
+const uint16_t keycode_LCTL_ALL[][3] = {
+      [0] = { LCTL_T(KC_A  ), KC_A  , MOD_LCTL }
+    , [1] = { LCTL_T(KC_1  ), KC_1  , MOD_LCTL }
+    , [2] = { LCTL_T(KC_TAB), KC_TAB, MOD_LCTL }
+};
+const uint16_t keycode_LSFT_ALL[][3] = {
+      [0] = { LSFT_T(KC_Z  ), KC_Z  , MOD_LSFT }
+    , [1] = { LSFT_T(KC_F11), KC_F11, MOD_LSFT }
+};
+const uint16_t keycode_LALT_ALL[][3] = {
+      [0] = { LALT_T(KC_X  ), KC_X  , MOD_LALT }
+    , [1] = { LALT_T(KC_F12), KC_F12, MOD_LALT }
+};
+const uint16_t keycode_LGUI_ALL[][3] = {
+      [0] = { LGUI_T(KC_C  ), KC_C  , MOD_LGUI }
+    , [1] = { LGUI_T(KC_GRV), KC_GRV, MOD_LGUI }
+};
+const uint16_t keycode_RCTL_ALL[][3] = {
+      [0] = { RCTL_T(KC_SCLN), KC_SCLN, MOD_RCTL }
+    , [1] = { RCTL_T(KC_0   ), KC_0   , MOD_RCTL }
+};
+const uint16_t keycode_RSFT_ALL[][3] = {
+      [0] = { RSFT_T(KC_SLSH), KC_SLSH, MOD_RSFT }
+    , [1] = { RSFT_T(KC_APP ), KC_APP , MOD_RSFT }
+};
+const uint16_t keycode_RALT_ALL[][3] = {
+      [0] = { RALT_T(KC_DOT ), KC_DOT , MOD_RALT }
+    , [1] = { RALT_T(KC_BSLS), KC_BSLS, MOD_RALT }
+    , [2] = { RALT_T(KC_APP ), KC_APP , MOD_RALT }
+};
+const uint16_t keycode_RGUI_ALL[][3] = {
+      [0] = { RGUI_T(KC_COMM), KC_COMM, MOD_RGUI }
+    , [1] = { RGUI_T(KC_RBRC), KC_RBRC, MOD_RGUI }
+};
+const uint16_t keycode_LT1_ALL [][3] = {
+      [0] = { LT(1, KC_V   ), KC_V    , OSL(1) }
+    , [1] = { LT(1, KC_M   ), KC_M    , OSL(1) }
+    , [2] = { LT(1, KC_MINS), KC_MINS , OSL(1) }
+    , [3] = { LT(1, KC_LBRC), KC_LBRC , OSL(1) }
+    , [4] = { LT(1, KC_LBRC), KC_LBRC , OSL(1) }
+};
+const uint16_t keycode_LT2_ALL [][3] = {
+      [0] = { LT(2, KC_F), KC_F, OSL(2) }
+    , [1] = { LT(2, KC_4), KC_4, OSL(2) }
+};
+const uint16_t keycode_LT3_ALL [][3] = {
+      [0] = { LT(3, KC_D), KC_D, OSL(3) }
+    , [1] = { LT(3, KC_3), KC_3, OSL(3) }
+};
+const uint16_t keycode_LT5_ALL [][3] = {
+      [0] = { LT(5, KC_V   ), KC_V   , OSL(5) }
+    , [1] = { LT(5, KC_M   ), KC_M   , OSL(5) }
+    , [2] = { LT(5, KC_MINS), KC_MINS, OSL(5) }
+    , [3] = { LT(5, KC_LBRC), KC_LBRC, OSL(5) }
+    , [4] = { LT(5, KC_LBRC), KC_LBRC, OSL(5) }
+};
+const uint16_t keycode_LT6_ALL [][3] = {
+      [0] = { LT(6, KC_F), KC_F, OSL(6) }
+    , [1] = { LT(6, KC_4), KC_4, OSL(6) }
+};
+const uint16_t keycode_LT7_ALL [][3] = {
+      [0] = { LT(7, KC_D), KC_D, OSL(7) }
+    , [1] = { LT(7, KC_3), KC_3, OSL(7) }
+};
 
-static bool rolling_to_mod_pending = false;
-static uint16_t rolling_to_mod_judge_timeS = 0;
+enum pending_mods {
+  PENDING_MOD_LSFT,
+  PENDING_MOD_LCTL,
+  PENDING_MOD_LALT,
+  PENDING_MOD_LGUI,
+  PENDING_MOD_RSFT,
+  PENDING_MOD_RCTL,
+  PENDING_MOD_RALT,
+  PENDING_MOD_RGUI,
+  PENDING_MOD_L1,
+  PENDING_MOD_L2,
+  PENDING_MOD_L3,
+  PENDING_MOD_L5,
+  PENDING_MOD_L6,
+  PENDING_MOD_L7,
+  NUM_MOD_PENDING_CANDIDATE
+};
+
+static uint16_t rolling_to_mod_pending_key[] = {
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+};
+static bool rolling_to_mod_pending_now[] = {
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+};
+static uint16_t rolling_to_mod_judge_timeS[] = {
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+};
 #define ROLLING_TO_MOD_TIMEOUT 50 // wait time for pending rolling to mod.(ms)
 
 
-void resolve_rolling_to_mod_pending(void) {
-    if (rolling_to_mod_pending) {
+void resolve_rolling_to_mod_pending(int type_mod) {
+    if (rolling_to_mod_pending_now[type_mod]) {
         // send tapping because no other keys pressed till time out.
-        tap_code(KC_SLSH);
-        rolling_to_mod_pending = false;
+        tap_code(rolling_to_mod_pending_key[type_mod]);
+        rolling_to_mod_pending_now[type_mod] = false;
     }
 }
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-
-    switch (keycode) {
-        case  RSFT_T(KC_SLSH):
-            if (record->event.pressed) {
-                // if exist pending, resolve this timing.
-                resolve_rolling_to_mod_pending();
-                register_code(KC_RSFT); // press Shift.
-            } else {
-                unregister_code(KC_RSFT); // first, release Shift.
-                // if other key is pressed with this key, this key is maybe Mod.
-                if (record->tap.count > 0) {
-                    rolling_to_mod_pending = true;
-                    rolling_to_mod_judge_timeS = timer_read();
-                }
-            }
-            return false; // override QMK's default action.
-
-        default:
-            if (record->event.pressed) {
-                // resolve pending when other key pressed.
-                resolve_rolling_to_mod_pending();
-            } else {
-                // if anykey released when any Mod-Tap key is pending, pending key is MOD.
-                if (rolling_to_mod_pending && keycode != RSFT_T(KC_SLSH)) {
-                    register_weak_mods(MOD_RSFT); // press Shift.
-                    rolling_to_mod_pending = false;
-                }
-            }
-            break;
+#define SOLVE_ROLLING_TO_MOD_PENDING(type_mod, mods, key_mod)             \
+    for (n = 0; n < sizeof(mods) / sizeof(mods[0]); n++) {                \
+        if (keycode == mods[n][0]) {                                      \
+            if (record->event.pressed) {                                  \
+                resolve_rolling_to_mod_pending(type_mod);                 \
+                register_code(key_mod);                                   \
+            } else {                                                      \
+                unregister_code(key_mod);                                 \
+                if (record->tap.count > 0) {                              \
+                    rolling_to_mod_pending_now[type_mod] = true;          \
+                    rolling_to_mod_pending_key[type_mod] = mods[n][1];    \
+                    rolling_to_mod_judge_timeS[type_mod] = timer_read();  \
+                }                                                         \
+            }                                                             \
+            return false;                                                 \
+        }                                                                 \
     }
+#define OTHER_ROLLING_TO_MOD_PENDING(type_mod, mods)                      \
+    for (n = 0; n < sizeof(mods) / sizeof(mods[0]); n++) {                \
+        if (record->event.pressed) {                                      \
+            resolve_rolling_to_mod_pending(type_mod);                     \
+        } else {                                                          \
+            if (rolling_to_mod_pending_now[type_mod]) {                   \
+                register_weak_mods(mods[n][2]);                           \
+                rolling_to_mod_pending_now[type_mod] = false;             \
+            }                                                             \
+        }                                                                 \
+    }
+
+#define SOLVE_ROLLING_TO_LAY_PENDING(type_mod, mods, layer)               \
+    for (n = 0; n < sizeof(mods) / sizeof(mods[0]); n++) {                \
+        if (keycode == mods[n][0]) {                                      \
+            if (record->event.pressed) {                                  \
+                resolve_rolling_to_mod_pending(type_mod);                 \
+                layer_on(layer);                                          \
+            } else {                                                      \
+                layer_off(layer);                                         \
+                if (record->tap.count > 0) {                              \
+                    rolling_to_mod_pending_now[type_mod] = true;          \
+                    rolling_to_mod_pending_key[type_mod] = mods[n][1];    \
+                    rolling_to_mod_judge_timeS[type_mod] = timer_read();  \
+                }                                                         \
+            }                                                             \
+            return false;                                                 \
+        }                                                                 \
+    }
+#define OTHER_ROLLING_TO_LAY_PENDING(type_mod, mods)                      \
+    for (n = 0; n < sizeof(mods) / sizeof(mods[0]); n++) {                \
+        if (record->event.pressed) {                                      \
+            resolve_rolling_to_mod_pending(type_mod);                     \
+        } else {                                                          \
+            if (rolling_to_mod_pending_now[type_mod]) {                   \
+                tap_code(mods[n][2]);                                     \
+                rolling_to_mod_pending_now[type_mod] = false;             \
+            }                                                             \
+        }                                                                 \
+    }
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    int n;
+    SOLVE_ROLLING_TO_MOD_PENDING(PENDING_MOD_LCTL, keycode_LCTL_ALL, KC_LCTL);
+    SOLVE_ROLLING_TO_MOD_PENDING(PENDING_MOD_LSFT, keycode_LSFT_ALL, KC_LSFT);
+    SOLVE_ROLLING_TO_MOD_PENDING(PENDING_MOD_LALT, keycode_LALT_ALL, KC_LALT);
+    SOLVE_ROLLING_TO_MOD_PENDING(PENDING_MOD_LGUI, keycode_LGUI_ALL, KC_LGUI);
+    SOLVE_ROLLING_TO_MOD_PENDING(PENDING_MOD_RCTL, keycode_RCTL_ALL, KC_RCTL);
+    SOLVE_ROLLING_TO_MOD_PENDING(PENDING_MOD_RSFT, keycode_RSFT_ALL, KC_RSFT);
+    SOLVE_ROLLING_TO_MOD_PENDING(PENDING_MOD_LALT, keycode_RALT_ALL, KC_RALT);
+    SOLVE_ROLLING_TO_MOD_PENDING(PENDING_MOD_RGUI, keycode_RGUI_ALL, KC_RGUI);
+
+    SOLVE_ROLLING_TO_LAY_PENDING(PENDING_MOD_L1,   keycode_LT1_ALL , 1);
+    SOLVE_ROLLING_TO_LAY_PENDING(PENDING_MOD_L2,   keycode_LT2_ALL , 2);
+    SOLVE_ROLLING_TO_LAY_PENDING(PENDING_MOD_L3,   keycode_LT3_ALL , 3);
+    SOLVE_ROLLING_TO_LAY_PENDING(PENDING_MOD_L5,   keycode_LT5_ALL , 5);
+    SOLVE_ROLLING_TO_LAY_PENDING(PENDING_MOD_L6,   keycode_LT6_ALL , 6);
+    SOLVE_ROLLING_TO_LAY_PENDING(PENDING_MOD_L7,   keycode_LT7_ALL , 7);
+
+
+    OTHER_ROLLING_TO_MOD_PENDING(PENDING_MOD_LCTL, keycode_LCTL_ALL);
+    OTHER_ROLLING_TO_MOD_PENDING(PENDING_MOD_LSFT, keycode_LSFT_ALL);
+    OTHER_ROLLING_TO_MOD_PENDING(PENDING_MOD_LALT, keycode_LALT_ALL);
+    OTHER_ROLLING_TO_MOD_PENDING(PENDING_MOD_LGUI, keycode_LGUI_ALL);
+    OTHER_ROLLING_TO_MOD_PENDING(PENDING_MOD_RCTL, keycode_RCTL_ALL);
+    OTHER_ROLLING_TO_MOD_PENDING(PENDING_MOD_RSFT, keycode_RSFT_ALL);
+    OTHER_ROLLING_TO_MOD_PENDING(PENDING_MOD_LALT, keycode_RALT_ALL);
+    OTHER_ROLLING_TO_MOD_PENDING(PENDING_MOD_RGUI, keycode_RGUI_ALL);
+
+    OTHER_ROLLING_TO_LAY_PENDING(PENDING_MOD_L1,   keycode_LT1_ALL);
+    OTHER_ROLLING_TO_LAY_PENDING(PENDING_MOD_L2,   keycode_LT2_ALL);
+    OTHER_ROLLING_TO_LAY_PENDING(PENDING_MOD_L3,   keycode_LT3_ALL);
+    OTHER_ROLLING_TO_LAY_PENDING(PENDING_MOD_L5,   keycode_LT5_ALL);
+    OTHER_ROLLING_TO_LAY_PENDING(PENDING_MOD_L6,   keycode_LT6_ALL);
+    OTHER_ROLLING_TO_LAY_PENDING(PENDING_MOD_L7,   keycode_LT7_ALL);
 
     return true;
 }
 
 void matrix_scan_user(void) {
-  if (rolling_to_mod_pending && timer_elapsed(rolling_to_mod_judge_timeS) > ROLLING_TO_MOD_TIMEOUT) {
-      resolve_rolling_to_mod_pending();
-  }
+    int type_mod;
+    for (type_mod = 0; type_mod < NUM_MOD_PENDING_CANDIDATE; type_mod++) {
+        if (rolling_to_mod_pending_now[type_mod]
+         && timer_elapsed(rolling_to_mod_judge_timeS[type_mod]) > ROLLING_TO_MOD_TIMEOUT) {
+            resolve_rolling_to_mod_pending(type_mod);
+        }
+    }
 }
+
