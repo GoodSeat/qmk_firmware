@@ -115,7 +115,7 @@ int remove_pressed_key(uint16_t keycode) {
         if (current_pressing_keys[i] != keycode) continue;
 
         for (j = i + 1; j < 10; j++) {
-            current_pressing_keys[i] = current_pressing_keys[j];
+            current_pressing_keys[j - 1] = current_pressing_keys[j];
         }
         current_pressing_keys[9] = 0;
         return i;
@@ -154,7 +154,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LT(5, KC_M):
         case LT(6, KC_F):
         case LT(7, KC_D):
-            if (!record->event.pressed && current_pressing_keys[index] != 0) {
+            if (record->tap.count > 0 && !record->event.pressed && current_pressing_keys[index] != 0) {
                 defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_release_callback, (void*)(uintptr_t)keycode);
                 return false;
             }
