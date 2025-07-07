@@ -98,27 +98,54 @@ combo_t key_combos[] = {
 
 #define ROLLING_TO_MOD_TIMEOUT 30 // wait time for pending rolling to mod.(ms)
 
-// 30ms後に実行されるコールバック関数
+static uint16_t current_pressing_keys[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+void add_pressed_key(uint16_t keycode) {
+    int i;
+    for (i = 0; i < 10; i++) {
+        if (current_pressing_keys[i] == 0) {
+            current_pressing_keys[i] = keycode;
+            return;
+        }
+    }
+}
+int remove_pressed_key(uint16_t keycode) {
+    int i, j;
+    for (i = 0; i < 10; i++) {
+        if (current_pressing_keys[i] != keycode) continue;
+
+        for (j = i + 1; j < 10; j++) {
+            current_pressing_keys[i] = current_pressing_keys[j];
+        }
+        current_pressing_keys[9] = 0;
+        return i;
+    }
+    return 9;
+}
+
 uint32_t delayed_key_release_callback(uint32_t trigger_time, void *cb_arg) {
-    // void*型で渡されたデータを、元のキーコード(uint16_t)に戻す
     uint16_t keycode = (uint16_t)(uintptr_t)cb_arg;
-
-    // 本来のキーリリース処理である unregister_code をここで実行
     unregister_code(keycode);
-
-    return 0; // 常に再実行はしない
+    return 0; // always don't recall.
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    int index = 0;
+    if (record->event.pressed) {
+        add_pressed_key(keycode);
+    } else {
+        index = remove_pressed_key(keycode);
+    }
+
     switch (keycode) {
-        // ここにリリースを遅延させたいキーコードを追加
-        case LCTL_T(KC_A  ):
-        case LSFT_T(KC_Z  ):
-        case LALT_T(KC_X  ):
-        case LGUI_T(KC_C  ):
-        case RSFT_T(KC_SLSH):
-        case RALT_T(KC_DOT ):
-        case RGUI_T(KC_COMM):
+        case LCTL_T(KC_A  ): // L-ctrl
+        case LSFT_T(KC_Z  ): // L-shift
+        case LALT_T(KC_X  ): // L-alt
+        case LGUI_T(KC_C  ): // L-win
+        case RCTL_T(KC_SCLN): // R-ctrl
+        case RSFT_T(KC_SLSH): // R-shift
+        case RALT_T(KC_DOT ): // R-alt
+        case RGUI_T(KC_COMM): // R-win
         case LT(1, KC_V):
         case LT(1, KC_M):
         case LT(2, KC_F):
@@ -127,17 +154,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LT(5, KC_M):
         case LT(6, KC_F):
         case LT(7, KC_D):
-            if (record->tap.count > 0 && !record->event.pressed) { // キーが離された時
-                // ROLLING_TO_MOD_TIMEOUT(ms)後に関数 delayed_key_release_callback を実行するよう予約
-                // 予約する際、処理対象のキーコード(keycode)をデータとして渡す
+            if (!record->event.pressed && current_pressing_keys[index] != 0) {
                 defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_release_callback, (void*)(uintptr_t)keycode);
-
-                // 本来のリリース処理をキャンセルするために false を返す
                 return false;
             }
             break;
 
-        // 他のキーの特殊処理があればここに追加
         // default:
         //     break;
     }
