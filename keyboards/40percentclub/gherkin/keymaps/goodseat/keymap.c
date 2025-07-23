@@ -19,13 +19,25 @@ enum my_keycodes {
   , KC_RA_DT
   , KC_RG_CM
 
+  , KC_LC_1
+  , KC_LS_F11
+  , KC_LA_F12
+  , KC_LG_GRV
+
+  , KC_RC_0
+  , KC_RS_AP
+  , KC_RA_BSL
+  , KC_RG_RBR
+
+  , KC_LC_TAB
+  , KC_RA_AP
 
   , KC_L1_V
   , KC_L1_M
   , KC_L2_F
   , KC_L3_D
 
-//  , KC_REVS
+  , KC_REVS
 };
 
 uint16_t tap_hold_get_tap_keycode(uint16_t keycode) {
@@ -39,6 +51,19 @@ uint16_t tap_hold_get_tap_keycode(uint16_t keycode) {
         case KC_RS_SL: return KC_SLSH;
         case KC_RA_DT: return KC_DOT;
         case KC_RG_CM: return KC_COMMA;
+
+        case KC_LC_1  : return KC_1;
+        case KC_LS_F11: return KC_F11;
+        case KC_LA_F12: return KC_F12;
+        case KC_LG_GRV: return KC_GRV;
+
+        case KC_RC_0  : return KC_0;
+        case KC_RS_AP : return KC_APP;
+        case KC_RA_BSL: return KC_BSLS;
+        case KC_RG_RBR: return KC_RBRC;
+
+        case KC_LC_TAB: return KC_TAB;
+        case KC_RA_AP : return KC_APP;
 
         case KC_L1_V : return KC_V;
         case KC_L1_M : return KC_M;
@@ -58,6 +83,19 @@ uint16_t tap_hold_get_hold_keycode(uint16_t keycode) {
         case KC_RS_SL: return KC_RSFT;
         case KC_RA_DT: return KC_RALT;
         case KC_RG_CM: return KC_RGUI;
+
+        case KC_LC_1  : return KC_LCTL;
+        case KC_LS_F11: return KC_LSFT;
+        case KC_LA_F12: return KC_LALT;
+        case KC_LG_GRV: return KC_LGUI;
+
+        case KC_RC_0  : return KC_RCTL;
+        case KC_RS_AP : return KC_RSFT;
+        case KC_RA_BSL: return KC_RALT;
+        case KC_RG_RBR: return KC_RGUI;
+
+        case KC_LC_TAB: return KC_LCTL;
+        case KC_RA_AP : return KC_RALT;
     }
     return 0;
 }
@@ -181,15 +219,31 @@ const char* get_keycode_str(uint16_t keycode) {
     case KC_LS_Z : sprintf(keycode_str, "KC_LS_Z"); break;
     case KC_LA_X : sprintf(keycode_str, "KC_LA_X"); break;
     case KC_LG_C : sprintf(keycode_str, "KC_LG_C"); break;
-    case KC_RC_CL: sprintf(keycode_str, "KC_RC_CL"); break;
-    case KC_RS_SL: sprintf(keycode_str, "KC_RS_SL"); break;
-    case KC_RA_DT: sprintf(keycode_str, "KC_RA_DT"); break;
-    case KC_RG_CM: sprintf(keycode_str, "KC_RG_CM"); break;
+
+    case KC_RC_CL : sprintf(keycode_str, "KC_RC_CL"); break;
+    case KC_RS_SL : sprintf(keycode_str, "KC_RS_SL"); break;
+    case KC_RA_DT : sprintf(keycode_str, "KC_RA_DT"); break;
+    case KC_RG_CM : sprintf(keycode_str, "KC_RG_CM"); break;
+
+    case KC_LC_1  : sprintf(keycode_str, "KC_LC_1"); break;
+    case KC_LS_F11: sprintf(keycode_str, "KC_LS_F11"); break;
+    case KC_LA_F12: sprintf(keycode_str, "KC_LA_F12"); break;
+    case KC_LG_GRV: sprintf(keycode_str, "KC_LG_GRV"); break;
+
+    case KC_RC_0  : sprintf(keycode_str, "KC_RC_0"); break;
+    case KC_RS_AP : sprintf(keycode_str, "KC_RS_AP"); break;
+    case KC_RA_BSL: sprintf(keycode_str, "KC_RA_BSL"); break;
+    case KC_RG_RBR: sprintf(keycode_str, "KC_RG_RBR"); break;
+
+    case KC_LC_TAB: sprintf(keycode_str, "KC_LC_TAB"); break;
+    case KC_RA_AP : sprintf(keycode_str, "KC_RA_AP"); break;
 
     case KC_L1_V : sprintf(keycode_str, "KC_L1_V"); break;
     case KC_L1_M : sprintf(keycode_str, "KC_L1_M"); break;
     case KC_L2_F : sprintf(keycode_str, "KC_L2_F"); break;
     case KC_L3_D : sprintf(keycode_str, "KC_L3_D"); break;
+
+    case KC_REVS : sprintf(keycode_str, "KC_REVS"); break;
 
     default: sprintf(keycode_str, "KC_%u", keycode); break;
     }
@@ -210,14 +264,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_LS_Z      , KC_LA_X      , KC_LG_C      , KC_L1_V      , KC_B         , KC_N         , KC_L1_M      , KC_RG_CM     , KC_RA_DT     , KC_RS_SL
   ),
   [1] = LAYOUT_ortho_3x10(
-            KC_F1  ,        KC_F2 ,       KC_F3  , KC_F4        , KC_F5        , KC_F6        , KC_F7        ,         KC_F8 ,       KC_F9   ,       KC_F10,
-     LCTL_T(KC_1)  ,        KC_2  ,       KC_3   , KC_4         , KC_5         , KC_6         , KC_7         ,         KC_8  ,       KC_9    ,RCTL_T(KC_0) ,
-     LSFT_T(KC_F11),LALT_T(KC_F12),LGUI_T(KC_GRV), KC_MINS      , KC_EQL       , KC_QUOT      , KC_LBRC      ,RGUI_T(KC_RBRC),RALT_T(KC_BSLS),RSFT_T(KC_APP)
+      KC_F1        , KC_F2        , KC_F3        , KC_F4        , KC_F5        , KC_F6        , KC_F7        , KC_F8        , KC_F9        , KC_F10       ,
+      KC_LC_1      , KC_2         , KC_3         , KC_4         , KC_5         , KC_6         , KC_7         , KC_8         , KC_9         , KC_RC_0      ,
+      KC_LS_F11    , KC_LA_F12    , KC_LG_GRV    , KC_MINS      , KC_EQL       , KC_QUOT      , KC_LBRC      , KC_RG_RBR    , KC_RA_BSL    , KC_RS_AP
   ),
   [2] = LAYOUT_ortho_3x10(
-           KC_ESC  , KC_VOLD      , KC_VOLU      , KC_MUTE      , KC_PAUS      , XXXXXXX      , KC_PGUP      , KC_UP        ,      KC_PGDN , KC_DEL       ,
-    LCTL_T(KC_TAB) , XXXXXXX      , XXXXXXX      , _______      , _______      , KC_HOME      , KC_LEFT      , KC_DOWN      ,      KC_RGHT , KC_RCTL      ,
-           KC_LSFT , KC_LALT      , KC_LGUI      , _______      , _______      , KC_END       , _______      , KC_RGUI      ,RALT_T(KC_APP), KC_RSFT
+      KC_ESC       , KC_VOLD      , KC_VOLU      , KC_MUTE      , KC_PAUS      , XXXXXXX      , KC_PGUP      , KC_UP        , KC_PGDN      , KC_DEL       ,
+      KC_LC_TAB    , XXXXXXX      , XXXXXXX      , _______      , _______      , KC_HOME      , KC_LEFT      , KC_DOWN      , KC_RGHT      , KC_RCTL      ,
+      KC_LSFT      , KC_LALT      , KC_LGUI      , _______      , _______      , KC_END       , _______      , KC_RGUI      , KC_RA_AP     , KC_RSFT
   ),
   [3] = LAYOUT_ortho_3x10(
       KC_ESC       , _______      , _______      , _______      , KC_PAUS      , KC_ESC       , KC_GRV       , KC_MINS      , KC_EQL       , KC_BSPC      ,
@@ -252,7 +306,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 static const uint16_t keymaps_s[][MATRIX_ROWS][MATRIX_COLS] = {
-
   //               V              V              V              V              V              V              V              V              V              V
   //          1         2         3         4         5         6         7         8         9         A         B         C         D         E         F
   // 123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
@@ -262,14 +315,14 @@ static const uint16_t keymaps_s[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_LS_Z      , KC_LA_X      , KC_LG_C      , KC_L1_V      , KC_B         , KC_N         , KC_L1_M      , KC_RG_CM     , KC_RA_DT     , KC_RS_SL
   ),
   [1] = LAYOUT_ortho_3x10(
-            KC_F1  ,        KC_F2 ,       KC_F3  , KC_F4        , KC_F5        , KC_F6        , KC_F7        ,         KC_F8 ,       KC_F9   ,       KC_F10,
-     LCTL_T(KC_1)  ,        KC_2  ,       KC_3   , KC_4         , KC_5         , KC_6         , KC_7         ,         KC_8  ,       KC_9    ,RCTL_T(KC_0) ,
-     LSFT_T(KC_F11),LALT_T(KC_F12),LGUI_T(KC_GRV), KC_MINS      , KC_EQL       , KC_QUOT      , KC_LBRC      ,RGUI_T(KC_RBRC),RALT_T(KC_BSLS),RSFT_T(KC_APP)
+      KC_F1        , KC_F2        , KC_F3        , KC_F4        , KC_F5        , KC_F6        , KC_F7        , KC_F8        , KC_F9        , KC_F10       ,
+      KC_LC_1      , KC_2         , KC_3         , KC_4         , KC_5         , KC_6         , KC_7         , KC_8         , KC_9         , KC_RC_0      ,
+      KC_LS_F11    , KC_LA_F12    , KC_LG_GRV    , KC_MINS      , KC_EQL       , KC_QUOT      , KC_LBRC      , KC_RG_RBR    , KC_RA_BSL    , KC_RS_AP
   ),
   [2] = LAYOUT_ortho_3x10(
-           KC_ESC  , KC_VOLD      , KC_VOLU      , KC_MUTE      , KC_PAUS      , XXXXXXX      , KC_PGUP      , KC_UP        ,      KC_PGDN , KC_DEL       ,
-    LCTL_T(KC_TAB) , XXXXXXX      , XXXXXXX      , _______      , _______      , KC_HOME      , KC_LEFT      , KC_DOWN      ,      KC_RGHT , KC_RCTL      ,
-           KC_LSFT , KC_LALT      , KC_LGUI      , _______      , _______      , KC_END       , _______      , KC_RGUI      ,RALT_T(KC_APP), KC_RSFT
+      KC_ESC       , KC_VOLD      , KC_VOLU      , KC_MUTE      , KC_PAUS      , XXXXXXX      , KC_PGUP      , KC_UP        , KC_PGDN      , KC_DEL       ,
+      KC_LC_TAB    , XXXXXXX      , XXXXXXX      , _______      , _______      , KC_HOME      , KC_LEFT      , KC_DOWN      , KC_RGHT      , KC_RCTL      ,
+      KC_LSFT      , KC_LALT      , KC_LGUI      , _______      , _______      , KC_END       , _______      , KC_RGUI      , KC_RA_AP     , KC_RSFT
   ),
   [3] = LAYOUT_ortho_3x10(
       KC_ESC       , _______      , _______      , _______      , KC_PAUS      , KC_ESC       , KC_GRV       , KC_MINS      , KC_EQL       , KC_BSPC      ,
@@ -599,7 +652,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
 
-            if (pending_taps[slot].keycode_registerd == 0) register_keycode_of_slot(slot);
+            if (pending_taps[slot].keycode_registerd == 0) unregister_keycode_of_slot(slot);
 
             pending_taps[slot].is_active = false;
 
