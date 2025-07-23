@@ -251,6 +251,42 @@ const char* get_keycode_str(uint16_t keycode) {
 }
 #endif // KEYMAP_INTROSPECTION_ENABLE
 
+//  L0
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//  |Q     <1>|W     <2>|E        |R        |T        |Y        |U     <5>|I     <6>|O        |P        |
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//  |A / Ctrl |S        |D / L3   |F / L2   |G        |H        |J     <3>|K     <4>|L        |: / Ctrl |
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//  |Z / Shft |X / Alt  |C / Win  |V / L1   |B        |N        |M / L1   |, / Win  |. / Alt  |/ / Shft |
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//    Combos:<1> Esc, <2> `, <3> Space, <4> Enter, <5> BS, <6> Del
+//
+//  L1
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//  |F1       |F2       |F3       |F4       |F5       |F6       |F7       |F8       |F9       |F10      |
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//  |1 / Ctrl |2        |3        |4        |5        |6        |7        |8        |9        |0 / Ctrl |
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//  |F11/ Sfft|F12/ Alt |` / Win  |-        |=        |'        |[        |] / Win  |\ / Alt  |App/ Shft|
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//
+//  L2
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//  |Esc      |Vol-     |Vol+     |Mute     |Pause    |XXXXXX   |PageUp   |Up       |PageDw   |Del      |
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//  |Tab/ Ctrl|XXXXXX   |XXXXXX   |         |         |Home     |Left     |Down     |Right    |Ctrl     |
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//  |Shft     |Alt      |Win      |         |         |End      |         |Win      |App/ Alt |Shft     |
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//
+//  L3
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//  |Esc      |         |         |         |Pause    |Esc      |`        |-        |=        |BS       |
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//  |Ctrl     |XXXXXX   |XXXXXX   |         |         |Conv     |Space    |NoConv   |Ins      |Enter    |
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
+//  |Shft     |Alt      |Win      |         |CapsLock |PrSc     |ScLk     |Win      |Alt      |Shft     |
+//  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //               V              V              V              V              V              V              V              V              V              V
@@ -315,7 +351,15 @@ enum combos {
   IO_DEL,
   QW_ESC,
   WE_GRV,
-  QP_TGL
+  QP_TGL,
+
+  FD_SPC,
+  DS_ENT,
+  VC_BSPC,
+  CX_DEL,
+  qd_ESC,
+  dp_GRV,
+  Zq_TGL,
 };
 
 const uint16_t PROGMEM jk_combo[] = {KC_J, KC_K, COMBO_END};
@@ -326,14 +370,30 @@ const uint16_t PROGMEM qw_combo[] = {KC_Q, KC_W, COMBO_END};
 const uint16_t PROGMEM we_combo[] = {KC_W, KC_E, COMBO_END};
 const uint16_t PROGMEM qp_combo[] = {KC_Q, KC_P, COMBO_END};
 
+const uint16_t PROGMEM fd_combo[] = {KC_L2_F , KC_L3_D , COMBO_END};
+const uint16_t PROGMEM ds_combo[] = {KC_L3_D , KC_S    , COMBO_END};
+const uint16_t PROGMEM vc_combo[] = {KC_L1_V , KC_LG_C , COMBO_END};
+const uint16_t PROGMEM cx_combo[] = {KC_LG_C , KC_LA_X , COMBO_END};
+const uint16_t PROGMEM qd_combo[] = {KC_RS_SL, KC_RA_DT, COMBO_END};
+const uint16_t PROGMEM dp_combo[] = {KC_RA_DT, KC_RG_CM, COMBO_END};
+const uint16_t PROGMEM zq_combo[] = {KC_LS_Z , KC_RS_SL, COMBO_END};
+
 combo_t key_combos[] = {
-  [JK_SPC]  = COMBO(jk_combo, KC_SPC),
-  [KL_ENT]  = COMBO(kl_combo, KC_ENT),
+  [JK_SPC ] = COMBO(jk_combo, KC_SPC ),
+  [KL_ENT ] = COMBO(kl_combo, KC_ENT ),
   [UI_BSPC] = COMBO(ui_combo, KC_BSPC),
-  [IO_DEL]  = COMBO(io_combo, KC_DEL),
-  [QW_ESC]  = COMBO(qw_combo, KC_ESC),
-  [WE_GRV]  = COMBO(we_combo, KC_GRV),
-  [QP_TGL]  = COMBO(qp_combo, KC_REVS)
+  [IO_DEL ] = COMBO(io_combo, KC_DEL ),
+  [QW_ESC ] = COMBO(qw_combo, KC_ESC ),
+  [WE_GRV ] = COMBO(we_combo, KC_GRV ),
+  [QP_TGL ] = COMBO(qp_combo, KC_REVS),
+
+  [FD_SPC ] = COMBO(fd_combo, KC_SPC ),
+  [DS_ENT ] = COMBO(ds_combo, KC_ENT ),
+  [VC_BSPC] = COMBO(vc_combo, KC_BSPC),
+  [CX_DEL ] = COMBO(cx_combo, KC_DEL ),
+  [qd_ESC ] = COMBO(qd_combo, KC_ESC ),
+  [dp_GRV ] = COMBO(dp_combo, KC_GRV ),
+  [Zq_TGL ] = COMBO(zq_combo, KC_REVS)
 };
 
 
@@ -341,7 +401,7 @@ combo_t key_combos[] = {
 // rolling press to hold
 // =================================================================================
 
-#define ROLLING_TO_MOD_TIMEOUT 30 // wait time for pending rolling to mod.(ms)
+#define ROLLING_TO_MOD_TIMEOUT 27 // wait time for pending rolling to mod.(ms)
 #define PENDING_TAP_CAPACITY 4
 
 static bool reversed_keymap = false;
@@ -538,11 +598,23 @@ uint32_t delayed_key_rolling_callback(uint32_t trigger_time, void *cb_arg) {
 
 // =================================================================================
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    bool existYounger = false;
     uint8_t i;
 
     uint8_t row = record->event.key.row;
     uint8_t col = record->event.key.col;
+    if (row == 0 && col == 0 && keymaps_s[get_highest_layer(layer_state)][row][col] != keycode) {
+#ifdef KEYMAP_INTROSPECTION_ENABLE
+// ============================================================================================//
+        if (record->event.pressed) uprintf("Combo Press  : %s\n", get_keycode_str(keycode));   //
+        else                       uprintf("Combo Release: %s\n", get_keycode_str(keycode));   //
+// ============================================================================================//
+#endif // KEYMAP_INTROSPECTION_ENABLE
+        if (keycode == KC_REVS && !record->event.pressed) {
+            reversed_keymap = !reversed_keymap;
+        }
+        return true;
+    }
+
     if (reversed_keymap) {
         row = MATRIX_ROWS - row - 1;
         col = MATRIX_COLS - col - 1;
@@ -567,12 +639,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     bool is_mod_tap_key = (tap_hold_get_tap_keycode(keycode) != keycode);
     if (!is_mod_tap_key && record->event.pressed && !exist_pending_key()) return true;
 
-    if (keycode == KC_REVS) {
-        if (!record->event.pressed) reversed_keymap = !reversed_keymap;
-        return true;
-    }
-
     uint8_t slot = 0;
+    bool existYounger = false;
     if (record->event.pressed) {
         slot = add_pressed_key(keycode, row, col);
     } else {
@@ -622,9 +690,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         pending_taps[i].keycode_registerd = k2;
                     }
                 }
-            }
 
-            if (pending_taps[slot].keycode_registerd == 0) unregister_keycode_of_slot(slot);
+                unregister_keycode_of_slot(slot);
+            }
 
             pending_taps[slot].is_active = false;
 
