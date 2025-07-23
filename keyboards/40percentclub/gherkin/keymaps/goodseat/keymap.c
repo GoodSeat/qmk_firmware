@@ -533,8 +533,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     uint8_t row = record->event.key.row;
     uint8_t col = record->event.key.col;
     if (reversed_keymap) {
-        row = MATRIX_ROWS - row;
-        col = MATRIX_COLS - col;
+        row = MATRIX_ROWS - row - 1;
+        col = MATRIX_COLS - col - 1;
         keycode = keymaps_s[get_highest_layer(layer_state)][row][col];
 
         record->event.key.row = row;
