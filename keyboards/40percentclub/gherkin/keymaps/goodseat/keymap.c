@@ -11,11 +11,19 @@
 enum my_keycodes {
     KC_LC_A = SAFE_RANGE
   , KC_LS_Z
+  , KC_LA_X
+  , KC_LG_C
+
   , KC_RC_CL
   , KC_RS_SL
+  , KC_RA_DT
+  , KC_RG_CM
+
 
   , KC_L1_V
   , KC_L1_M
+  , KC_L2_F
+  , KC_L3_D
 
 //  , KC_REVS
 };
@@ -23,13 +31,13 @@ enum my_keycodes {
 
 #ifdef KEYMAP_INTROSPECTION_ENABLE
 
-const char* get_keycode_str1(uint16_t keycode, bool *hit) {
+const char* get_keycode_str(uint16_t keycode) {
     static char keycode_str[16];
-    *hit = true;
 
     switch (keycode) {
-    case KC_NO: sprintf(keycode_str, "KC_NO"); *hit = false; break;
+    case KC_NO:          sprintf(keycode_str, "KC_NO"); break;
     case KC_TRANSPARENT: sprintf(keycode_str, "KC_TRNS"); break;
+
     case KC_A: sprintf(keycode_str, "KC_A"); break;
     case KC_B: sprintf(keycode_str, "KC_B"); break;
     case KC_C: sprintf(keycode_str, "KC_C"); break;
@@ -66,98 +74,88 @@ const char* get_keycode_str1(uint16_t keycode, bool *hit) {
     case KC_8: sprintf(keycode_str, "KC_8"); break;
     case KC_9: sprintf(keycode_str, "KC_9"); break;
     case KC_0: sprintf(keycode_str, "KC_0"); break;
-    case KC_ENTER: sprintf(keycode_str, "KC_ENTER"); break;
-    case KC_ESCAPE: sprintf(keycode_str, "KC_ESCAPE"); break;
-    case KC_BACKSPACE: sprintf(keycode_str, "KC_BACKSPACE"); break;
-    case KC_TAB: sprintf(keycode_str, "KC_TAB"); break;
-    case KC_SPACE: sprintf(keycode_str, "KC_SPACE"); break;
-    case KC_MINUS: sprintf(keycode_str, "KC_MINUS"); break;
-    case KC_EQUAL: sprintf(keycode_str, "KC_EQUAL"); break;
-    case KC_LEFT_BRACKET: sprintf(keycode_str, "KC_LEFT_BRACKET"); break;
-    case KC_RIGHT_BRACKET: sprintf(keycode_str, "KC_RIGHT_BRACKET"); break;
-    case KC_BACKSLASH: sprintf(keycode_str, "KC_BACKSLASH"); break;
-    case KC_NONUS_HASH: sprintf(keycode_str, "KC_NONUS_HASH"); break;
-    case KC_SEMICOLON: sprintf(keycode_str, "KC_SEMICOLON"); break;
-    case KC_QUOTE: sprintf(keycode_str, "KC_QUOTE"); break;
-    case KC_GRAVE: sprintf(keycode_str, "KC_GRAVE"); break;
-    case KC_COMMA: sprintf(keycode_str, "KC_COMMA"); break;
-    case KC_DOT: sprintf(keycode_str, "KC_DOT"); break;
-    case KC_SLASH: sprintf(keycode_str, "KC_SLASH"); break;
-    case KC_CAPS_LOCK: sprintf(keycode_str, "KC_CAPS_LOCK"); break;
-    case KC_F1: sprintf(keycode_str, "KC_F1"); break;
-    case KC_F2: sprintf(keycode_str, "KC_F2"); break;
-    case KC_F3: sprintf(keycode_str, "KC_F3"); break;
-    case KC_F4: sprintf(keycode_str, "KC_F4"); break;
-    case KC_F5: sprintf(keycode_str, "KC_F5"); break;
-    case KC_F6: sprintf(keycode_str, "KC_F6"); break;
-    case KC_F7: sprintf(keycode_str, "KC_F7"); break;
-    case KC_F8: sprintf(keycode_str, "KC_F8"); break;
-    case KC_F9: sprintf(keycode_str, "KC_F9"); break;
-    case KC_F10: sprintf(keycode_str, "KC_F10"); break;
-    case KC_F11: sprintf(keycode_str, "KC_F11"); break;
-    case KC_F12: sprintf(keycode_str, "KC_F12"); break;
-    case KC_PRINT_SCREEN: sprintf(keycode_str, "KC_PRINT_SCREEN"); break;
-    case KC_SCROLL_LOCK: sprintf(keycode_str, "KC_SCROLL_LOCK"); break;
-    case KC_PAUSE: sprintf(keycode_str, "KC_PAUSE"); break;
-    case KC_INSERT: sprintf(keycode_str, "KC_INSERT"); break;
-    case KC_HOME: sprintf(keycode_str, "KC_HOME"); break;
-    case KC_PAGE_UP: sprintf(keycode_str, "KC_PAGE_UP"); break;
-    case KC_DELETE: sprintf(keycode_str, "KC_DELETE"); break;
-    case KC_END: sprintf(keycode_str, "KC_END"); break;
-    case KC_PAGE_DOWN: sprintf(keycode_str, "KC_PAGE_DOWN"); break;
-    case KC_RIGHT: sprintf(keycode_str, "KC_RIGHT"); break;
-    case KC_LEFT: sprintf(keycode_str, "KC_LEFT"); break;
-    case KC_DOWN: sprintf(keycode_str, "KC_DOWN"); break;
-    case KC_UP: sprintf(keycode_str, "KC_UP"); break;
-    case KC_NUM_LOCK: sprintf(keycode_str, "KC_NUM_LOCK"); break;
-    case KC_KP_SLASH: sprintf(keycode_str, "KC_KP_SLASH"); break;
-    case KC_KP_ASTERISK: sprintf(keycode_str, "KC_KP_ASTERISK"); break;
-    case KC_KP_MINUS: sprintf(keycode_str, "KC_KP_MINUS"); break;
-    case KC_KP_PLUS: sprintf(keycode_str, "KC_KP_PLUS"); break;
-    case KC_KP_ENTER: sprintf(keycode_str, "KC_KP_ENTER"); break;
 
-    case KC_LEFT_CTRL: sprintf(keycode_str, "KC_LEFT_CTRL"); break;
-    case KC_LEFT_SHIFT: sprintf(keycode_str, "KC_LEFT_SHIFT"); break;
-    case KC_LEFT_ALT: sprintf(keycode_str, "KC_LEFT_ALT"); break;
-    case KC_LEFT_GUI: sprintf(keycode_str, "KC_LEFT_GUI"); break;
-    case KC_RIGHT_CTRL: sprintf(keycode_str, "KC_RIGHT_CTRL"); break;
-    case KC_RIGHT_SHIFT: sprintf(keycode_str, "KC_RIGHT_SHIFT"); break;
-    case KC_RIGHT_ALT: sprintf(keycode_str, "KC_RIGHT_ALT"); break;
-    case KC_RIGHT_GUI: sprintf(keycode_str, "KC_RIGHT_GUI"); break;
+    case KC_ENTER:          sprintf(keycode_str, "KC_ENTER"); break;
+    case KC_ESCAPE:         sprintf(keycode_str, "KC_ESC"); break;
+    case KC_BACKSPACE:      sprintf(keycode_str, "KC_BCSP"); break;
+    case KC_TAB:            sprintf(keycode_str, "KC_TAB"); break;
+    case KC_SPACE:          sprintf(keycode_str, "KC_SPACE"); break;
+    case KC_MINUS:          sprintf(keycode_str, "KC_MINUS"); break;
+    case KC_EQUAL:          sprintf(keycode_str, "KC_EQUAL"); break;
+    case KC_LEFT_BRACKET:   sprintf(keycode_str, "KC_LEFT_BRACKET"); break;
+    case KC_RIGHT_BRACKET:  sprintf(keycode_str, "KC_RIGHT_BRACKET"); break;
+    case KC_BACKSLASH:      sprintf(keycode_str, "KC_BACKSLASH"); break;
+    case KC_NONUS_HASH:     sprintf(keycode_str, "KC_NONUS_HASH"); break;
+    case KC_SEMICOLON:      sprintf(keycode_str, "KC_SEMICOLON"); break;
+    case KC_QUOTE:          sprintf(keycode_str, "KC_QUOTE"); break;
+    case KC_GRAVE:          sprintf(keycode_str, "KC_GRAVE"); break;
+    case KC_COMMA:          sprintf(keycode_str, "KC_COMMA"); break;
+    case KC_DOT:            sprintf(keycode_str, "KC_DOT"); break;
+    case KC_SLASH:          sprintf(keycode_str, "KC_SLASH"); break;
+    case KC_CAPS_LOCK:      sprintf(keycode_str, "KC_CAPS_LOCK"); break;
+    case KC_F1:             sprintf(keycode_str, "KC_F1"); break;
+    case KC_F2:             sprintf(keycode_str, "KC_F2"); break;
+    case KC_F3:             sprintf(keycode_str, "KC_F3"); break;
+    case KC_F4:             sprintf(keycode_str, "KC_F4"); break;
+    case KC_F5:             sprintf(keycode_str, "KC_F5"); break;
+    case KC_F6:             sprintf(keycode_str, "KC_F6"); break;
+    case KC_F7:             sprintf(keycode_str, "KC_F7"); break;
+    case KC_F8:             sprintf(keycode_str, "KC_F8"); break;
+    case KC_F9:             sprintf(keycode_str, "KC_F9"); break;
+    case KC_F10:            sprintf(keycode_str, "KC_F10"); break;
+    case KC_F11:            sprintf(keycode_str, "KC_F11"); break;
+    case KC_F12:            sprintf(keycode_str, "KC_F12"); break;
+    case KC_PRINT_SCREEN:   sprintf(keycode_str, "KC_PRSC"); break;
+    case KC_SCROLL_LOCK:    sprintf(keycode_str, "KC_SCLK"); break;
+    case KC_PAUSE:          sprintf(keycode_str, "KC_PAUS"); break;
+    case KC_INSERT:         sprintf(keycode_str, "KC_INST"); break;
+    case KC_HOME:           sprintf(keycode_str, "KC_HOME"); break;
+    case KC_PAGE_UP:        sprintf(keycode_str, "KC_PGUP"); break;
+    case KC_DELETE:         sprintf(keycode_str, "KC_DELT"); break;
+    case KC_END:            sprintf(keycode_str, "KC_END"); break;
+    case KC_PAGE_DOWN:      sprintf(keycode_str, "KC_PGDN"); break;
+    case KC_RIGHT:          sprintf(keycode_str, "KC_RIGHT"); break;
+    case KC_LEFT:           sprintf(keycode_str, "KC_LEFT"); break;
+    case KC_DOWN:           sprintf(keycode_str, "KC_DOWN"); break;
+    case KC_UP:             sprintf(keycode_str, "KC_UP"); break;
+    case KC_NUM_LOCK:       sprintf(keycode_str, "KC_NUM_LOCK"); break;
+    case KC_KP_SLASH:       sprintf(keycode_str, "KC_KP_SLASH"); break;
+    case KC_KP_ASTERISK:    sprintf(keycode_str, "KC_KP_ASTERISK"); break;
+    case KC_KP_MINUS:       sprintf(keycode_str, "KC_KP_MINUS"); break;
+    case KC_KP_PLUS:        sprintf(keycode_str, "KC_KP_PLUS") ; break;
+    case KC_KP_ENTER:       sprintf(keycode_str, "KC_KP_ENTER"); break;
+
+    case KC_LEFT_CTRL:      sprintf(keycode_str, "KC_LEFT_CTRL"); break;
+    case KC_LEFT_SHIFT:     sprintf(keycode_str, "KC_LEFT_SHIFT"); break;
+    case KC_LEFT_ALT:       sprintf(keycode_str, "KC_LEFT_ALT"); break;
+    case KC_LEFT_GUI:       sprintf(keycode_str, "KC_LEFT_GUI"); break;
+    case KC_RIGHT_CTRL:     sprintf(keycode_str, "KC_RIGHT_CTRL"); break;
+    case KC_RIGHT_SHIFT:    sprintf(keycode_str, "KC_RIGHT_SHIFT"); break;
+    case KC_RIGHT_ALT:      sprintf(keycode_str, "KC_RIGHT_ALT"); break;
+    case KC_RIGHT_GUI:      sprintf(keycode_str, "KC_RIGHT_GUI"); break;
 
     case KC_LC_A : sprintf(keycode_str, "KC_LC_A"); break;
     case KC_LS_Z : sprintf(keycode_str, "KC_LS_Z"); break;
+    case KC_LA_X : sprintf(keycode_str, "KC_LA_X"); break;
+    case KC_LG_C : sprintf(keycode_str, "KC_LG_C"); break;
     case KC_RC_CL: sprintf(keycode_str, "KC_RC_CL"); break;
     case KC_RS_SL: sprintf(keycode_str, "KC_RS_SL"); break;
+    case KC_RA_DT: sprintf(keycode_str, "KC_RA_DT"); break;
+    case KC_RG_CM: sprintf(keycode_str, "KC_RG_CM"); break;
 
     case KC_L1_V : sprintf(keycode_str, "KC_L1_V"); break;
     case KC_L1_M : sprintf(keycode_str, "KC_L1_M"); break;
+    case KC_L2_F : sprintf(keycode_str, "KC_L2_F"); break;
+    case KC_L3_D : sprintf(keycode_str, "KC_L3_D"); break;
 
-    case LT(1,KC_MINS): sprintf(keycode_str, "LT(1,KC_MINS)"); break;
-    case LT(2,KC_F): sprintf(keycode_str, "LT(2,KC_F)"); break;
-    case LT(3,KC_D): sprintf(keycode_str, "LT(3,KC_D)"); break;
-
-    default: sprintf(keycode_str, "KC_%u", keycode); *hit = false; break;
+    default: sprintf(keycode_str, "KC_%u", keycode); break;
     }
 
     return keycode_str;
 }
-const char* get_keycode_str(uint16_t keycode) {
-    bool hit;
-    return get_keycode_str1(keycode, &hit);
-}
 
 #endif // KEYMAP_INTROSPECTION_ENABLE
 
-//KEYCODE_STRING_NAMES_USER(
-//    KEYCODE_STRING_NAME(KC_LC_A ),
-//    KEYCODE_STRING_NAME(KC_LS_Z ),
-//    KEYCODE_STRING_NAME(KC_RC_CL),
-//    KEYCODE_STRING_NAME(KC_RS_SL),
-//
-//    KEYCODE_STRING_NAME(KC_L1_V ),
-//    KEYCODE_STRING_NAME(KC_L1_M )
-//);
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -212,8 +210,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 */
   [0] = LAYOUT_ortho_3x10(
              KC_Q ,          KC_W ,          KC_E ,          KC_R ,     KC_T,    KC_Y,          KC_U ,           KC_I ,         KC_O   ,        KC_P    ,
-           KC_LC_A,          KC_S ,   LT(3,  KC_D),    LT(2, KC_F),     KC_G,    KC_H,          KC_J ,           KC_K ,         KC_L   ,        KC_RC_CL,
-           KC_LS_Z,   LALT_T(KC_X),   LGUI_T(KC_C),        KC_L1_V,     KC_B,    KC_N,       KC_L1_M , RGUI_T(KC_COMM),  RALT_T(KC_DOT),        KC_RS_SL
+           KC_LC_A,          KC_S ,       KC_L3_D ,        KC_L2_F,     KC_G,    KC_H,          KC_J ,           KC_K ,         KC_L   ,        KC_RC_CL,
+           KC_LS_Z,       KC_LA_X ,       KC_LG_C ,        KC_L1_V,     KC_B,    KC_N,       KC_L1_M ,       KC_RG_CM ,       KC_RA_DT ,        KC_RS_SL
   ),
 
   [1] = LAYOUT_ortho_3x10(
@@ -264,8 +262,8 @@ static const uint16_t keymaps_s[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [0] = LAYOUT_ortho_3x10(
              KC_Q ,          KC_W ,          KC_E ,          KC_R ,     KC_T,    KC_Y,          KC_U ,           KC_I ,         KC_O   ,        KC_P    ,
-           KC_LC_A,          KC_S ,   LT(3,  KC_D),    LT(2, KC_F),     KC_G,    KC_H,          KC_J ,           KC_K ,         KC_L   ,        KC_RC_CL,
-           KC_LS_Z,   LALT_T(KC_X),   LGUI_T(KC_C),        KC_L1_V,     KC_B,    KC_N,       KC_L1_M , RGUI_T(KC_COMM),  RALT_T(KC_DOT),        KC_RS_SL
+           KC_LC_A,          KC_S ,       KC_L3_D ,        KC_L2_F,     KC_G,    KC_H,          KC_J ,           KC_K ,         KC_L   ,        KC_RC_CL,
+           KC_LS_Z,       KC_LA_X ,       KC_LG_C ,        KC_L1_V,     KC_B,    KC_N,       KC_L1_M ,       KC_RG_CM ,       KC_RA_DT ,        KC_RS_SL
   ),
 
   [1] = LAYOUT_ortho_3x10(
@@ -311,54 +309,6 @@ static const uint16_t keymaps_s[][MATRIX_ROWS][MATRIX_COLS] = {
   )
 
 };
-
-/*
-bool find_keycode_in_layer(uint8_t layer, uint16_t keycode, uint8_t *row, uint8_t *col) {
-    uint8_t ls = layer;
-    uint8_t le = layer + 1;
-    if (layer > 50) {
-        if (get_highest_layer(layer_state) < 4) {
-            ls = 0;
-            le = 4;
-        } else {
-            ls = 4;
-            le = 8;
-        }
-    }
-
-    uprintf("    search %s...\n", get_keycode_str(keycode));
-    uprintf("        * ls,le,rm,cm = %u,%u,%u,%u\n", ls,le,MATRIX_ROWS,MATRIX_COLS);
-
-    bool hit;
-    for (uint8_t l = ls; l < le; l++) {
-        for (uint8_t r = 0; r < MATRIX_ROWS; r++) {
-            for (uint8_t c = 0; c < MATRIX_COLS; c++) {
-
-                const char* kc = get_keycode_str1(keymaps[l][r][c], &hit);
-                if (hit) uprintf("        * k%u%u%u = %s\n", l, r, c, kc);
-
-                if (keymaps[l][r][c] == keycode) {
-                    *row = r;
-                    *col = c;
-                    uprintf("    --> found [%u][%u][%u].\n", l, r, c);
-                    return true;
-                }
-            }
-        }
-    }
-    uprintf("    --> not found!!\n");
-    return false;
-}
-
-uint16_t convert_keycode_to_layer(uint8_t source_layer, uint8_t target_layer, uint16_t source_keycode) {
-    uint8_t row, col;
-    if (find_keycode_in_layer(source_layer, source_keycode, &row, &col)) {
-        uprintf("        ==> %s\n", get_keycode_str(keymaps[target_layer][row][col]));
-        return keymaps[target_layer][row][col];
-    }
-    return KC_NO;
-}
-*/
 
 // =================================================================================
 // combos
@@ -410,16 +360,24 @@ MOD_RSFT
 
  * */
 
-#define ROLLING_TO_MOD_TIMEOUT 40 // wait time for pending rolling to mod.(ms)
+#define ROLLING_TO_MOD_TIMEOUT 30 // wait time for pending rolling to mod.(ms)
 
 uint16_t tap_hold_get_tap_keycode(uint16_t keycode) {
     switch (keycode) {
         case KC_LC_A : return KC_A;
         case KC_LS_Z : return KC_Z;
+        case KC_LA_X : return KC_X;
+        case KC_LG_C : return KC_C;
+
         case KC_RC_CL: return KC_SCLN;
         case KC_RS_SL: return KC_SLSH;
+        case KC_RA_DT: return KC_DOT;
+        case KC_RG_CM: return KC_COMMA;
+
         case KC_L1_V : return KC_V;
         case KC_L1_M : return KC_M;
+        case KC_L2_F : return KC_F;
+        case KC_L3_D : return KC_D;
     }
     return keycode;
 }
@@ -427,8 +385,13 @@ uint16_t tap_hold_get_hold_keycode(uint16_t keycode) {
     switch (keycode) {
         case KC_LC_A : return KC_LCTL;
         case KC_LS_Z : return KC_LSFT;
+        case KC_LA_X : return KC_LALT;
+        case KC_LG_C : return KC_LGUI;
+
         case KC_RC_CL: return KC_RCTL;
         case KC_RS_SL: return KC_RSFT;
+        case KC_RA_DT: return KC_RALT;
+        case KC_RG_CM: return KC_RGUI;
     }
     return 0;
 }
@@ -436,6 +399,8 @@ uint8_t tap_hold_get_hold_layer(uint16_t keycode) {
     switch (keycode) {
         case KC_L1_V: return 1;
         case KC_L1_M: return 1;
+        case KC_L2_F: return 2;
+        case KC_L3_D: return 3;
     }
     return 0;
 }
@@ -685,11 +650,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         cancel_deferred_exec(pending_taps[i].tapping_pending_token);
                         pending_taps[i].tapping_pending_token = 0;
 
-                        uint16_t k = to_current_layer_keycode(i);
-//                        tap_code_print(k);
-                        register_code_print(k);
+                        uint16_t k  = to_current_layer_keycode(i);
+                        uint16_t k2 = tap_hold_get_tap_keycode(k);
+//                        tap_code_print(k2);
+                        register_code_print(k2);
                         pending_taps[i].is_pending = false;
-                        pending_taps[i].keycode_registerd = k;
+                        pending_taps[i].keycode_registerd = k2;
                     }
                 }
             }
