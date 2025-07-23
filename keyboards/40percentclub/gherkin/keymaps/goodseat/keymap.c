@@ -893,6 +893,36 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 };
 
+bool find_keycode_in_layer(uint8_t layer, uint16_t keycode, uint8_t *row, uint8_t *col) {
+    uint8_t ls = layer;
+    uint8_t le = layer + 1;
+    if (layer < 0) {
+        ls = 0;
+        ls = 8;
+    }
+
+    for (uint8_t l = ls; l < le; l++) {
+        for (uint8_t r = 0; r < MATRIX_ROWS; r++) {
+            for (uint8_t c = 0; c < MATRIX_COLS; c++) {
+                if (keymaps[l][r][c] == keycode) {
+                    *row = r;
+                    *col = c;
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+uint16_t convert_keycode_to_layer(uint8_t source_layer, uint8_t target_layer, uint16_t source_keycode) {
+    uint8_t row, col;
+    if (find_keycode_in_layer(source_layer, source_keycode, &row, &col)) {
+        return keymaps[target_layer][row][col];
+    }
+    return KC_NO;
+}
+
 // =================================================================================
 // combos
 // =================================================================================
@@ -943,13 +973,13 @@ MOD_RSFT
 
  * */
 
-#define ROLLING_TO_MOD_TIMEOUT 200 // wait time for pending rolling to mod.(ms)
+#define ROLLING_TO_MOD_TIMEOUT 40 // wait time for pending rolling to mod.(ms)
 
 uint16_t tap_hold_get_tap_keycode(uint16_t keycode) {
     switch (keycode) {
         case KC_LC_A : return KC_A;
         case KC_LS_Z : return KC_Z;
-        case KC_RC_CL: return KC_COMM;
+        case KC_RC_CL: return KC_SCLN;
         case KC_RS_SL: return KC_SLSH;
         case KC_L1_V : return KC_V;
         case KC_L1_M : return KC_M;
@@ -973,24 +1003,16 @@ uint8_t tap_hold_get_hold_layer(uint16_t keycode) {
     return 0;
 }
 
-enum pending_slots {
-      PSL_0 = 0
-    , PSL_1
-    , PSL_2
-    , PSL_3
-    , PSL_4
-    , PSL_5
-    , PSL_6
-    , PENDING_TAP_CAPACITY
-};
+#define PENDING_TAP_CAPACITY 7
 
 static uint8_t pressed_key_count = 0;
 
 // Tapを保留するための情報構造体
 typedef struct {
+    uint8_t  slot_id;        // このスロットの識別番号
     bool     is_active;      // このスロットが使用中か
     bool     is_pending;     // tap-pressが保留中か
-    uint16_t keycode;        // tap.count > 0 だった元のMod Tapキーコード
+    uint16_t keycode;        // 元のキーコード
     uint16_t pressed_time;   // このキーが押された時刻
     uint16_t release_time;   // このキーが離された時刻
     deferred_token tapping_pending_token; // TAPPING_TERMの遅延トークン Mod-tapキー以外では常に0
@@ -1000,8 +1022,9 @@ typedef struct {
 static pending_tap_t pending_taps[PENDING_TAP_CAPACITY];
 
 void keyboard_post_init_user(void) {
-    uint16_t i;
+    uint8_t i;
     for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
+        pending_taps[i].slot_id      = i;
         pending_taps[i].is_active    = false;
         pending_taps[i].is_pending   = false;
         pending_taps[i].keycode      = 0;
@@ -1013,7 +1036,7 @@ void keyboard_post_init_user(void) {
 }
 
 uint16_t add_pressed_key(uint16_t keycode) {
-    uint16_t i;
+    uint8_t i;
     for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
         if (!pending_taps[i].is_active) {
             pending_taps[i].is_active    = true;
@@ -1029,7 +1052,7 @@ uint16_t add_pressed_key(uint16_t keycode) {
     return 0;
 }
 uint16_t remove_pressed_key(uint16_t keycode, bool *existYounger) {
-    uint16_t i, j;
+    uint8_t i, j;
     uint16_t t;
     *existYounger = false;
     for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
@@ -1048,7 +1071,7 @@ uint16_t remove_pressed_key(uint16_t keycode, bool *existYounger) {
     return i;
 }
 bool exist_pending_key(void) {
-    uint16_t i;
+    uint8_t i;
     for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
         if (pending_taps[i].is_active && pending_taps[i].is_pending) return true;
     }
@@ -1171,15 +1194,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     if (record->event.pressed) {
         if (is_mod_tap_key) {
-            switch (slot) {
-                case PSL_0: pending_taps[slot].tapping_pending_token = defer_exec(TAPPING_TERM, delayed_key_tap_callback, (void*)(uintptr_t)PSL_0); break;
-                case PSL_1: pending_taps[slot].tapping_pending_token = defer_exec(TAPPING_TERM, delayed_key_tap_callback, (void*)(uintptr_t)PSL_1); break;
-                case PSL_2: pending_taps[slot].tapping_pending_token = defer_exec(TAPPING_TERM, delayed_key_tap_callback, (void*)(uintptr_t)PSL_2); break;
-                case PSL_3: pending_taps[slot].tapping_pending_token = defer_exec(TAPPING_TERM, delayed_key_tap_callback, (void*)(uintptr_t)PSL_3); break;
-                case PSL_4: pending_taps[slot].tapping_pending_token = defer_exec(TAPPING_TERM, delayed_key_tap_callback, (void*)(uintptr_t)PSL_4); break;
-                case PSL_5: pending_taps[slot].tapping_pending_token = defer_exec(TAPPING_TERM, delayed_key_tap_callback, (void*)(uintptr_t)PSL_5); break;
-                case PSL_6: pending_taps[slot].tapping_pending_token = defer_exec(TAPPING_TERM, delayed_key_tap_callback, (void*)(uintptr_t)PSL_6); break;
-            }
+            pending_taps[slot].tapping_pending_token = defer_exec(TAPPING_TERM, delayed_key_tap_callback, (void*)(uintptr_t)pending_taps[slot].slot_id);
         }
         return false;
     } else {
@@ -1192,7 +1207,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             else if (layer_no != 0) layer_off_print(layer_no);
 
             pending_taps[slot].is_active = false;
-            print("!is_pending\n");
+            print("    !is_pending -> return true\n");
             return true;
         }
 
@@ -1201,15 +1216,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             pending_taps[slot].tapping_pending_token = 0;
 
             if (existYounger) {
-                switch (slot) {
-                    case PSL_0: pending_taps[slot].rolling_pending_token = defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_rolling_callback, (void*)(uintptr_t)PSL_0); break;
-                    case PSL_1: pending_taps[slot].rolling_pending_token = defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_rolling_callback, (void*)(uintptr_t)PSL_1); break;
-                    case PSL_2: pending_taps[slot].rolling_pending_token = defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_rolling_callback, (void*)(uintptr_t)PSL_2); break;
-                    case PSL_3: pending_taps[slot].rolling_pending_token = defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_rolling_callback, (void*)(uintptr_t)PSL_3); break;
-                    case PSL_4: pending_taps[slot].rolling_pending_token = defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_rolling_callback, (void*)(uintptr_t)PSL_4); break;
-                    case PSL_5: pending_taps[slot].rolling_pending_token = defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_rolling_callback, (void*)(uintptr_t)PSL_5); break;
-                    case PSL_6: pending_taps[slot].rolling_pending_token = defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_rolling_callback, (void*)(uintptr_t)PSL_6); break;
-                }
+                pending_taps[slot].rolling_pending_token = defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_rolling_callback, (void*)(uintptr_t)pending_taps[slot].slot_id);
                 return false;
             }
         }
@@ -1230,7 +1237,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
         }
 
-        tap_code_print(tap_hold_get_tap_keycode(pending_taps[slot].keycode));
+
+        uint16_t sendKeycode = pending_taps[slot].keycode;
+        if (layer_no != 0) {
+            sendKeycode = convert_keycode_to_layer(-1, layer_no, sendKeycode);
+            uprintf("   %s -> %s \n", get_keycode_str(pending_taps[slot].keycode), get_keycode_str(sendKeycode));
+        }
+
+        tap_code_print(tap_hold_get_tap_keycode(sendKeycode));
 
         for (i = 0; i < PENDING_TAP_CAPACITY; ++i) {
             if (!pending_taps[i].is_active) continue;
