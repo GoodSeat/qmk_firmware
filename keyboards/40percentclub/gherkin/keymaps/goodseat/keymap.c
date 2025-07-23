@@ -18,15 +18,15 @@ enum my_keycodes {
   , KC_L1_M
 };
 
-KEYCODE_STRING_NAMES_USER(
-    KEYCODE_STRING_NAME(KC_LC_A ),
-    KEYCODE_STRING_NAME(KC_LS_Z ),
-    KEYCODE_STRING_NAME(KC_RC_CL),
-    KEYCODE_STRING_NAME(KC_RS_SL),
-
-    KEYCODE_STRING_NAME(KC_L1_V ),
-    KEYCODE_STRING_NAME(KC_L1_M )
-);
+//KEYCODE_STRING_NAMES_USER(
+//    KEYCODE_STRING_NAME(KC_LC_A ),
+//    KEYCODE_STRING_NAME(KC_LS_Z ),
+//    KEYCODE_STRING_NAME(KC_RC_CL),
+//    KEYCODE_STRING_NAME(KC_RS_SL),
+//
+//    KEYCODE_STRING_NAME(KC_L1_V ),
+//    KEYCODE_STRING_NAME(KC_L1_M )
+//);
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -283,7 +283,7 @@ uint16_t remove_pressed_key(uint16_t keycode, bool *existYounger) {
     }
     return i;
 }
-bool exist_penging_key(void) {
+bool exist_pending_key(void) {
     uint16_t i;
     for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
         if (pending_taps[i].is_active && pending_taps[i].is_pending) return true;
@@ -292,15 +292,15 @@ bool exist_penging_key(void) {
 }
 
 void tap_code_print(uint16_t keycode) {
-    uprintf("  tap_code_print: %s\n", get_keycode_string(keycode));
+    uprintf("  tap_code_print: %u\n", keycode);
     tap_code(keycode);
 }
 void register_code_print(uint16_t keycode) {
-    uprintf("  register_code_print: %s\n", get_keycode_string(keycode));
+    uprintf("  register_code_print: %u\n", keycode);
     register_code(keycode);
 }
 void unregister_code_print(uint16_t keycode) {
-    uprintf("  unregister_code_print: %s\n", get_keycode_string(keycode));
+    uprintf("  unregister_code_print: %u\n", keycode);
     unregister_code(keycode);
 }
 void layer_on_print(int16_t layer) {
@@ -316,7 +316,7 @@ void layer_off_print(int16_t layer) {
 uint32_t delayed_key_tap_callback(uint32_t trigger_time, void *cb_arg) {
 
     uint8_t slot = (uint16_t)(uintptr_t)cb_arg;
-    uprintf("  * delayed_key_tap_callback: %s\n", get_keycode_string(pending_taps[slot].keycode));
+    uprintf("  * delayed_key_tap_callback: %u\n", pending_taps[slot].keycode);
 
     pending_taps[slot].is_pending   = false;
     pending_taps[slot].tapping_pending_token = 0;
@@ -352,7 +352,7 @@ uint32_t delayed_key_tap_callback(uint32_t trigger_time, void *cb_arg) {
 uint32_t delayed_key_rolling_callback(uint32_t trigger_time, void *cb_arg) {
 
     uint8_t slot = (uint16_t)(uintptr_t)cb_arg;
-    uprintf("  * delayed_key_rolling_callback: %s\n", get_keycode_string(pending_taps[slot].keycode));
+    uprintf("  * delayed_key_rolling_callback: %u\n", pending_taps[slot].keycode);
 
     pending_taps[slot].is_active   = false;
     pending_taps[slot].is_pending  = false;
@@ -388,24 +388,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     uint8_t layer_no;
 
     if (pressed_key_count == 0) print("---\n");
+    if      (record->event.pressed) pressed_key_count++;
+    else if (pressed_key_count > 0) pressed_key_count--;
 
-    if (record->event.pressed) uprintf("Key Press  : %s\n", get_keycode_string(keycode));
-    else                       uprintf("Key Release: %s\n", get_keycode_string(keycode));
+    if (record->event.pressed) uprintf("Key Press  : %u\n", keycode);
+    else                       uprintf("Key Release: %u\n", keycode);
 
     bool is_mod_tap_key = (tap_hold_get_tap_keycode(keycode) != keycode);
     if (!is_mod_tap_key) {
-        if (pressed_key_count == 0 || !exist_penging_key()) return true;
+        if (pressed_key_count == 0 || !exist_pending_key()) return true;
     }
 
     if (record->event.pressed) {
         slot = add_pressed_key(keycode);
-        pressed_key_count++;
     } else {
         slot = remove_pressed_key(keycode, &existYounger);
-        if (pressed_key_count > 0) pressed_key_count--;
     }
-    xprintf("pressed_key_count: %u\n", pressed_key_count);
-    xprintf("record->tap.count: %u\n", record->tap.count);
+    xprintf(" <pressed_key_count: %u>\n", pressed_key_count);
+//    xprintf("  <record->tap.count: %u>\n", record->tap.count);
 
     if (record->event.pressed) {
         if (is_mod_tap_key) {
@@ -438,11 +438,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             cancel_deferred_exec(pending_taps[slot].tapping_pending_token);
             pending_taps[slot].tapping_pending_token = 0;
 
-            if (!existYounger) {
-                tap_code_print(tap_hold_get_tap_keycode(pending_taps[slot].keycode));
-                pending_taps[slot].is_pending = false;
-                pending_taps[slot].is_active  = false;
-            } else {
+            if (existYounger) {
                 switch (slot) {
                     case PSL_0: pending_taps[slot].rolling_pending_token = defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_rolling_callback, (void*)(uintptr_t)PSL_0); break;
                     case PSL_1: pending_taps[slot].rolling_pending_token = defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_rolling_callback, (void*)(uintptr_t)PSL_1); break;
@@ -452,41 +448,43 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     case PSL_5: pending_taps[slot].rolling_pending_token = defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_rolling_callback, (void*)(uintptr_t)PSL_5); break;
                     case PSL_6: pending_taps[slot].rolling_pending_token = defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_rolling_callback, (void*)(uintptr_t)PSL_6); break;
                 }
+                return false;
             }
-            return false;
-        } else {
+        }
 
-            // 自分よりpressの古いmodキー、あるいは30ms以内に離された保留中のmodキーがあれば、それをModキー扱いとする
-            for (i = 0; i < PENDING_TAP_CAPACITY; ++i) {
-                if (!pending_taps[i].is_active) continue;
-                if (pending_taps[i].pressed_time < pending_taps[slot].pressed_time || pending_taps[i].rolling_pending_token != 0) {
-                    pending_taps[i].is_pending = false;
+        pending_taps[slot].is_pending = false;
+        pending_taps[slot].is_active  = false;
 
-                    mod_key  = tap_hold_get_hold_keycode(pending_taps[i].keycode);
-                    layer_no = tap_hold_get_hold_layer  (pending_taps[i].keycode);
-                    if      (mod_key  != 0) register_code_print(mod_key);
-                    else if (layer_no != 0) layer_on_print(layer_no);
-                }
+        // 自分よりpressの古いmodキー、あるいは30ms以内に離された保留中のmodキーがあれば、それをModキー扱いとする
+        for (i = 0; i < PENDING_TAP_CAPACITY; ++i) {
+            if (!pending_taps[i].is_active) continue;
+            if (pending_taps[i].pressed_time < pending_taps[slot].pressed_time || pending_taps[i].rolling_pending_token != 0) {
+                pending_taps[i].is_pending = false;
+
+                mod_key  = tap_hold_get_hold_keycode(pending_taps[i].keycode);
+                layer_no = tap_hold_get_hold_layer  (pending_taps[i].keycode);
+                if      (mod_key  != 0) register_code_print(mod_key);
+                else if (layer_no != 0) layer_on_print(layer_no);
             }
+        }
 
-            tap_code_print(keycode);
+        tap_code_print(tap_hold_get_tap_keycode(pending_taps[slot].keycode));
 
-            for (i = 0; i < PENDING_TAP_CAPACITY; ++i) {
-                if (!pending_taps[i].is_active) continue;
+        for (i = 0; i < PENDING_TAP_CAPACITY; ++i) {
+            if (!pending_taps[i].is_active) continue;
 
-                if (pending_taps[i].rolling_pending_token != 0) {
-                    pending_taps[i].is_active = false;
-                    mod_key  = tap_hold_get_hold_keycode(pending_taps[i].keycode);
-                    layer_no = tap_hold_get_hold_layer  (pending_taps[i].keycode);
-                    if      (mod_key  != 0) unregister_code_print(mod_key);
-                    else if (layer_no != 0) layer_off_print(layer_no);
+            if (pending_taps[i].rolling_pending_token != 0) {
+                pending_taps[i].is_active = false;
+                mod_key  = tap_hold_get_hold_keycode(pending_taps[i].keycode);
+                layer_no = tap_hold_get_hold_layer  (pending_taps[i].keycode);
+                if      (mod_key  != 0) unregister_code_print(mod_key);
+                else if (layer_no != 0) layer_off_print(layer_no);
 
-                    cancel_deferred_exec(pending_taps[i].rolling_pending_token);
-                    pending_taps[i].rolling_pending_token = 0;
-                } else if (pending_taps[i].pressed_time < pending_taps[slot].pressed_time) {
-                    cancel_deferred_exec(pending_taps[i].tapping_pending_token);
-                    pending_taps[i].tapping_pending_token = 0;
-                }
+                cancel_deferred_exec(pending_taps[i].rolling_pending_token);
+                pending_taps[i].rolling_pending_token = 0;
+            } else if (pending_taps[i].pressed_time < pending_taps[slot].pressed_time) {
+                cancel_deferred_exec(pending_taps[i].tapping_pending_token);
+                pending_taps[i].tapping_pending_token = 0;
             }
         }
 
