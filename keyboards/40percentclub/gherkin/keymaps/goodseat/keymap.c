@@ -18,6 +18,16 @@ enum my_keycodes {
   , KC_L1_M
 };
 
+KEYCODE_STRING_NAMES_USER(
+    KEYCODE_STRING_NAME(KC_LC_A ),
+    KEYCODE_STRING_NAME(KC_LS_Z ),
+    KEYCODE_STRING_NAME(KC_RC_CL),
+    KEYCODE_STRING_NAME(KC_RS_SL),
+
+    KEYCODE_STRING_NAME(KC_L1_V ),
+    KEYCODE_STRING_NAME(KC_L1_M )
+);
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /*
@@ -225,6 +235,19 @@ typedef struct {
 
 static pending_tap_t pending_taps[PENDING_TAP_CAPACITY];
 
+void keyboard_post_init_user(void) {
+    uint16_t i;
+    for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
+        pending_taps[i].is_active    = false;
+        pending_taps[i].is_pending   = false;
+        pending_taps[i].keycode      = 0;
+        pending_taps[i].pressed_time = 0;
+        pending_taps[i].release_time = 0;
+        pending_taps[i].tapping_pending_token = 0;
+        pending_taps[i].rolling_pending_token = 0;
+    }
+}
+
 uint16_t add_pressed_key(uint16_t keycode) {
     uint16_t i;
     for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
@@ -269,15 +292,15 @@ bool exist_penging_key(void) {
 }
 
 void tap_code_print(uint16_t keycode) {
-    uprintf("  tap_code_print: 0x%04X\n", keycode);
+    uprintf("  tap_code_print: %s\n", get_keycode_string(keycode));
     tap_code(keycode);
 }
 void register_code_print(uint16_t keycode) {
-    uprintf("  register_code_print: 0x%04X\n", keycode);
+    uprintf("  register_code_print: %s\n", get_keycode_string(keycode));
     register_code(keycode);
 }
 void unregister_code_print(uint16_t keycode) {
-    uprintf("  unregister_code_print: 0x%04X\n", keycode);
+    uprintf("  unregister_code_print: %s\n", get_keycode_string(keycode));
     unregister_code(keycode);
 }
 void layer_on_print(int16_t layer) {
@@ -293,7 +316,7 @@ void layer_off_print(int16_t layer) {
 uint32_t delayed_key_tap_callback(uint32_t trigger_time, void *cb_arg) {
 
     uint8_t slot = (uint16_t)(uintptr_t)cb_arg;
-    xprintf("  * delayed_key_tap_callback: %u\n", pending_taps[slot].keycode);
+    uprintf("  * delayed_key_tap_callback: %s\n", get_keycode_string(pending_taps[slot].keycode));
 
     pending_taps[slot].is_pending   = false;
     pending_taps[slot].tapping_pending_token = 0;
@@ -329,7 +352,7 @@ uint32_t delayed_key_tap_callback(uint32_t trigger_time, void *cb_arg) {
 uint32_t delayed_key_rolling_callback(uint32_t trigger_time, void *cb_arg) {
 
     uint8_t slot = (uint16_t)(uintptr_t)cb_arg;
-    xprintf("  * delayed_key_rolling_callback: %u\n", pending_taps[slot].keycode);
+    uprintf("  * delayed_key_rolling_callback: %s\n", get_keycode_string(pending_taps[slot].keycode));
 
     pending_taps[slot].is_active   = false;
     pending_taps[slot].is_pending  = false;
@@ -364,10 +387,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     uint16_t mod_key;
     uint8_t layer_no;
 
-    if (pressed_key_count == 0) uprintf("---\n");
+    if (pressed_key_count == 0) print("---\n");
 
-    if (record->event.pressed) uprintf("Key Press  : 0x%04X\n", keycode);
-    else                       uprintf("Key Release: 0x%04X\n", keycode);
+    if (record->event.pressed) uprintf("Key Press  : %s\n", get_keycode_string(keycode));
+    else                       uprintf("Key Release: %s\n", get_keycode_string(keycode));
 
     bool is_mod_tap_key = (tap_hold_get_tap_keycode(keycode) != keycode);
     if (!is_mod_tap_key) {
@@ -406,7 +429,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if      (mod_key  != 0) unregister_code_print(mod_key);
             else if (layer_no != 0) layer_off_print(layer_no);
 
-            xprintf("!is_pending\n");
+            pending_taps[slot].is_active = false;
+            print("!is_pending\n");
             return true;
         }
 
