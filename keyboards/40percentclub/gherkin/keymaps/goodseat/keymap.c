@@ -111,7 +111,6 @@ uint8_t tap_hold_get_hold_layer(uint16_t keycode) {
 
 
 #ifdef KEYMAP_INTROSPECTION_ENABLE
-
 const char* get_keycode_str(uint16_t keycode) {
     static char keycode_str[16];
 
@@ -250,7 +249,6 @@ const char* get_keycode_str(uint16_t keycode) {
 
     return keycode_str;
 }
-
 #endif // KEYMAP_INTROSPECTION_ENABLE
 
 
@@ -368,8 +366,7 @@ typedef struct {
 static pending_tap_t pending_taps[PENDING_TAP_CAPACITY];
 
 void keyboard_post_init_user(void) {
-    uint8_t i;
-    for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
+    for (uint8_t i = 0; i < PENDING_TAP_CAPACITY; i++) {
         pending_taps[i].slot_id               = i;
         pending_taps[i].is_active             = false;
         pending_taps[i].is_pending            = false;
@@ -389,14 +386,15 @@ uint16_t to_current_layer_keycode(uint8_t slot) {
     uint8_t r = pending_taps[slot].krow;
     uint8_t c = pending_taps[slot].kcol;
     uint16_t k = keymaps_s[l][r][c];
+#ifdef KEYMAP_INTROSPECTION_ENABLE
     uprintf("    currentLayer: %u  [%u][%u] -> %s\n", l, r, c, get_keycode_str(k));
+#endif // KEYMAP_INTROSPECTION_ENABLE
     return k;
 }
 
 
 uint8_t add_pressed_key(uint16_t keycode, uint8_t row, uint8_t col) {
-    uint8_t i;
-    for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
+    for (uint8_t i = 0; i < PENDING_TAP_CAPACITY; i++) {
         if (!pending_taps[i].is_active) {
             pending_taps[i].is_active             = true;
             pending_taps[i].is_pending            = true;
@@ -413,20 +411,20 @@ uint8_t add_pressed_key(uint16_t keycode, uint8_t row, uint8_t col) {
     }
     return PENDING_TAP_CAPACITY + 1;
 }
-uint16_t remove_pressed_key(uint16_t keycode, bool *existYounger) {
-    uint8_t i, j;
+uint16_t remove_pressed_key(uint8_t row, uint8_t col, bool *existYounger) {
+    uint8_t i;
     uint16_t t;
     *existYounger = false;
     for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
-        if (pending_taps[i].keycode != keycode) continue;
+        if (pending_taps[i].krow != row || pending_taps[i].kcol != col) continue;
         pending_taps[i].release_time = timer_read();
         t = pending_taps[i].pressed_time;
         break;
     }
     if (i >= PENDING_TAP_CAPACITY) return i + 1;
 
-    for (j = 0; j < PENDING_TAP_CAPACITY; j++) {
-        if (!pending_taps[j].is_active || pending_taps[j].keycode == keycode) continue;
+    for (uint8_t j = 0; j < PENDING_TAP_CAPACITY; j++) {
+        if (!pending_taps[j].is_active || i == j) continue;
         if (pending_taps[j].pressed_time > t) {
             *existYounger = true;
             break;
@@ -435,8 +433,7 @@ uint16_t remove_pressed_key(uint16_t keycode, bool *existYounger) {
     return i;
 }
 bool exist_pending_key(void) {
-    uint8_t i;
-    for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
+    for (uint8_t i = 0; i < PENDING_TAP_CAPACITY; i++) {
         if (pending_taps[i].is_active && pending_taps[i].is_pending) return true;
     }
     return false;
@@ -444,23 +441,33 @@ bool exist_pending_key(void) {
 
 // =================================================================================
 void tap_code_print(uint16_t keycode) {
+#ifdef KEYMAP_INTROSPECTION_ENABLE
     uprintf("  tap_code_print: %s\n", get_keycode_str(keycode));
+#endif // KEYMAP_INTROSPECTION_ENABLE
     tap_code(keycode);
 }
 void register_code_print(uint16_t keycode) {
+#ifdef KEYMAP_INTROSPECTION_ENABLE
     uprintf("  register_code_print: %s\n", get_keycode_str(keycode));
+#endif // KEYMAP_INTROSPECTION_ENABLE
     register_code(keycode);
 }
 void unregister_code_print(uint16_t keycode) {
+#ifdef KEYMAP_INTROSPECTION_ENABLE
     uprintf("  unregister_code_print: %s\n", get_keycode_str(keycode));
+#endif // KEYMAP_INTROSPECTION_ENABLE
     unregister_code(keycode);
 }
 void layer_on_print(int16_t layer) {
+#ifdef KEYMAP_INTROSPECTION_ENABLE
     uprintf("  layer_on_print: 0x%04X\n", layer);
+#endif // KEYMAP_INTROSPECTION_ENABLE
     layer_on(layer);
 }
 void layer_off_print(int16_t layer) {
+#ifdef KEYMAP_INTROSPECTION_ENABLE
     uprintf("  layer_off_print: 0x%04X\n", layer);
+#endif // KEYMAP_INTROSPECTION_ENABLE
     layer_off(layer);
 }
 
@@ -500,7 +507,9 @@ void resolve_pending_normal_keys_if_no_mod_pending(void) {
 
 uint32_t delayed_key_tap_callback(uint32_t trigger_time, void *cb_arg) {
     uint8_t slot = (uint16_t)(uintptr_t)cb_arg;
+#ifdef KEYMAP_INTROSPECTION_ENABLE
     uprintf("  * delayed_key_tap_callback: %s\n", get_keycode_str(pending_taps[slot].keycode));
+#endif // KEYMAP_INTROSPECTION_ENABLE
 
     pending_taps[slot].is_pending   = false;
     pending_taps[slot].tapping_pending_token = 0;
@@ -514,7 +523,9 @@ uint32_t delayed_key_tap_callback(uint32_t trigger_time, void *cb_arg) {
 
 uint32_t delayed_key_rolling_callback(uint32_t trigger_time, void *cb_arg) {
     uint8_t slot = (uint16_t)(uintptr_t)cb_arg;
+#ifdef KEYMAP_INTROSPECTION_ENABLE
     uprintf("  ** delayed_key_rolling_callback: %s\n", get_keycode_str(pending_taps[slot].keycode));
+#endif // KEYMAP_INTROSPECTION_ENABLE
 
     pending_taps[slot].is_active   = false;
     pending_taps[slot].is_pending  = false;
@@ -546,8 +557,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if      (record->event.pressed) pressed_key_count++;
     else if (pressed_key_count > 0) pressed_key_count--;
 
-    if (record->event.pressed) uprintf("Key Press  : %s[%u][%u]\n", get_keycode_str(keycode), row, col);
-    else                       uprintf("Key Release: %s[%u][%u]\n", get_keycode_str(keycode), row, col);
+#ifdef KEYMAP_INTROSPECTION_ENABLE
+// ========================================================================================================//
+    if (record->event.pressed) uprintf("Key Press  : %s[%u][%u]\n", get_keycode_str(keycode), row, col);   //
+    else                       uprintf("Key Release: %s[%u][%u]\n", get_keycode_str(keycode), row, col);   //
+// ========================================================================================================//
+#endif // KEYMAP_INTROSPECTION_ENABLE
 
     bool is_mod_tap_key = (tap_hold_get_tap_keycode(keycode) != keycode);
     if (!is_mod_tap_key && record->event.pressed && !exist_pending_key()) return true;
@@ -561,18 +576,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         slot = add_pressed_key(keycode, row, col);
     } else {
-        slot = remove_pressed_key(keycode, &existYounger);
+        slot = remove_pressed_key(row, col, &existYounger);
     }
     if (!is_mod_tap_key && slot >= PENDING_TAP_CAPACITY) return true; // スロットに未登録のキー
 
+#ifdef KEYMAP_INTROSPECTION_ENABLE
     xprintf(" <pressed_key_count: %u> slot:%u\n", pressed_key_count, slot);
+#endif // KEYMAP_INTROSPECTION_ENABLE
 
     if (slot >= PENDING_TAP_CAPACITY) {
+#ifdef KEYMAP_INTROSPECTION_ENABLE
         xprintf(" ### ACTIVE SLOT COUNT OVER %u ###\n", PENDING_TAP_CAPACITY);
+#endif // KEYMAP_INTROSPECTION_ENABLE
         return true;
     }
-//    xprintf("  <record->tap.count: %u>\n", record->tap.count);
+    if (record->event.pressed && reversed_keymap) { // 押下時のレイヤーに基づくキーコードを再現
+        keycode = pending_taps[slot].keycode;
+        record->keycode = keycode;
+    }
 
+    // ------------------------------------------------------------------------------------------------------------------
     if (record->event.pressed) {
         if (is_mod_tap_key) {
             pending_taps[slot].tapping_pending_token = defer_exec(TAPPING_TERM, delayed_key_tap_callback, (void*)(uintptr_t)pending_taps[slot].slot_id);
@@ -585,8 +608,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (is_mod_tap_key) { // tapping term以上押されたmod-tapキーが離された時
                 for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
                     if (i == slot || !pending_taps[i].is_active) continue;
-                    if (pending_taps[i].tapping_pending_token != 0  // mod-tapキーで、
-                     && pending_taps[i].pressed_time > pending_taps[slot].pressed_time // このキーより後に押され
+                    if (pending_taps[i].tapping_pending_token != 0                           // mod-tapキーで、
+                     && pending_taps[i].pressed_time > pending_taps[slot].pressed_time       // このキーより後に押され、
                      && timer_elapsed(pending_taps[i].pressed_time) > ROLLING_TO_MOD_TIMEOUT // ROLLING_TO_MOD_TIMEOUT以上共存したキーはtap扱いとする
                         ) {
                         cancel_deferred_exec(pending_taps[i].tapping_pending_token);
@@ -607,10 +630,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
             if (pending_taps[slot].keycode_registerd != 0) {
                 unregister_code_print(pending_taps[slot].keycode_registerd);
+#ifdef KEYMAP_INTROSPECTION_ENABLE
                 print("    !is_pending -> return false;\n");
+#endif // KEYMAP_INTROSPECTION_ENABLE
                 return false;
             } else {
+#ifdef KEYMAP_INTROSPECTION_ENABLE
                 print("    !is_pending -> return true;\n");
+#endif // KEYMAP_INTROSPECTION_ENABLE
                 return true;
             }
         } else { // 保留中キーのリリース時
@@ -619,7 +646,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pending_taps[slot].tapping_pending_token = 0;
 
                 if (existYounger) {
+#ifdef KEYMAP_INTROSPECTION_ENABLE
                     print("     existYounger, start rolling pending.\n");
+#endif // KEYMAP_INTROSPECTION_ENABLE
                     pending_taps[slot].rolling_pending_token = defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_rolling_callback, (void*)(uintptr_t)pending_taps[slot].slot_id);
                     return false;
                 }
