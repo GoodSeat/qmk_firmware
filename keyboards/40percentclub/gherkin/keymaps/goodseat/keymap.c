@@ -278,31 +278,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_LCTL      , XXXXXXX      , XXXXXXX      , _______      , _______      , KC_HENK      , KC_SPC       , KC_MHEN      , KC_INS       , KC_ENT       ,
       KC_LSFT      , KC_LALT      , KC_LGUI      , _______      , KC_CAPS      , KC_PSCR      , KC_SCRL      , KC_RGUI      , KC_RALT      , KC_RSFT
   ),
-
-  //               V              V              V              V              V              V              V              V              V              V
-  //          1         2         3         4         5         6         7         8         9         A         B         C         D         E         F
-  // 123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-  [4] = LAYOUT_ortho_3x10(
-             KC_RS_SL,  RALT_T(KC_DOT), RGUI_T(KC_COMM),    LT(5, KC_M),    KC_N,     KC_B,    LT(5, KC_V),   LGUI_T(KC_C),   LALT_T(KC_X),     KC_LS_Z ,
-             KC_RC_CL,         KC_L   ,           KC_K ,          KC_J ,    KC_H,     KC_G,    LT(6, KC_F),   LT(7,  KC_D),          KC_S ,     KC_LC_A ,
-             KC_P    ,         KC_O   ,           KC_I ,          KC_U ,    KC_Y,     KC_T,          KC_R ,          KC_E ,          KC_W ,        KC_Q
-  ),
-  [5] = LAYOUT_ortho_3x10(
-      RSFT_T(KC_APP ), RALT_T(KC_BSLS), RGUI_T(KC_RBRC), LT(5, KC_LBRC), KC_QUOT,   KC_EQL, LT(5, KC_MINS), LGUI_T(KC_GRV), LALT_T(KC_F12), LSFT_T(KC_F11) ,
-      RCTL_T(KC_0)   ,        KC_9    ,          KC_8  ,       KC_7    ,    KC_6,   KC_5  , LT(6, KC_4)   , LT(7,  KC_3)  ,        KC_2   , LCTL_T(KC_1)   ,
-             KC_F10  ,        KC_F9   ,          KC_F8 ,       KC_F7   ,   KC_F6,  KC_F5  ,       KC_F4   ,        KC_F3  ,        KC_F2  ,        KC_F1
-  ),
-  [6] = LAYOUT_ortho_3x10(
-             KC_RSFT , RALT_T(KC_APP ),        KC_RGUI ,       _______ , KC_END ,  _______, LT(5, KC_MINS), LGUI_T(KC_GRV), LALT_T(KC_F12),      KC_LSFT ,
-             KC_RCTL ,        KC_RGHT ,        KC_DOWN ,       KC_LEFT , KC_HOME,  _______, _______       , XXXXXXX       , XXXXXXX       ,LCTL_T(KC_TAB),
-             KC_DEL  ,        KC_PGDN ,        KC_UP   ,       KC_PGUP , XXXXXXX,  KC_PAUS, KC_MUTE       , KC_VOLU       , KC_VOLD       ,      KC_ESC
-  ),
-  [7] = LAYOUT_ortho_3x10(
-             KC_RSFT ,        KC_RALT ,        KC_RGUI ,       KC_SCRL , KC_PSCR,  KC_CAPS, _______       , KC_LGUI       , KC_LALT       ,      KC_LSFT ,
-             KC_ENT  ,        KC_INS  ,        KC_MHEN ,       KC_SPC  , KC_HENK,  _______, _______       , XXXXXXX       , XXXXXXX       ,      KC_LCTL ,
-             KC_BSPC ,        KC_EQL  ,        KC_MINS ,       KC_GRV  , KC_ESC ,  KC_PAUS, _______       , _______       , _______       ,      KC_ESC
-  )
-
 };
 
 static const uint16_t keymaps_s[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -329,31 +304,6 @@ static const uint16_t keymaps_s[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_LCTL      , XXXXXXX      , XXXXXXX      , _______      , _______      , KC_HENK      , KC_SPC       , KC_MHEN      , KC_INS       , KC_ENT       ,
       KC_LSFT      , KC_LALT      , KC_LGUI      , _______      , KC_CAPS      , KC_PSCR      , KC_SCRL      , KC_RGUI      , KC_RALT      , KC_RSFT
   ),
-
-  //               V              V              V              V              V              V              V              V              V              V
-  //          1         2         3         4         5         6         7         8         9         A         B         C         D         E         F
-  // 123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-  [4] = LAYOUT_ortho_3x10(
-             KC_RS_SL,  RALT_T(KC_DOT), RGUI_T(KC_COMM),    LT(5, KC_M),    KC_N,     KC_B,    LT(5, KC_V),   LGUI_T(KC_C),   LALT_T(KC_X),     KC_LS_Z ,
-             KC_RC_CL,         KC_L   ,           KC_K ,          KC_J ,    KC_H,     KC_G,    LT(6, KC_F),   LT(7,  KC_D),          KC_S ,     KC_LC_A ,
-             KC_P    ,         KC_O   ,           KC_I ,          KC_U ,    KC_Y,     KC_T,          KC_R ,          KC_E ,          KC_W ,        KC_Q
-  ),
-  [5] = LAYOUT_ortho_3x10(
-      RSFT_T(KC_APP ), RALT_T(KC_BSLS), RGUI_T(KC_RBRC), LT(5, KC_LBRC), KC_QUOT,   KC_EQL, LT(5, KC_MINS), LGUI_T(KC_GRV), LALT_T(KC_F12), LSFT_T(KC_F11) ,
-      RCTL_T(KC_0)   ,        KC_9    ,          KC_8  ,       KC_7    ,    KC_6,   KC_5  , LT(6, KC_4)   , LT(7,  KC_3)  ,        KC_2   , LCTL_T(KC_1)   ,
-             KC_F10  ,        KC_F9   ,          KC_F8 ,       KC_F7   ,   KC_F6,  KC_F5  ,       KC_F4   ,        KC_F3  ,        KC_F2  ,        KC_F1
-  ),
-  [6] = LAYOUT_ortho_3x10(
-             KC_RSFT , RALT_T(KC_APP ),        KC_RGUI ,       _______ , KC_END ,  _______, LT(5, KC_MINS), LGUI_T(KC_GRV), LALT_T(KC_F12),      KC_LSFT ,
-             KC_RCTL ,        KC_RGHT ,        KC_DOWN ,       KC_LEFT , KC_HOME,  _______, _______       , XXXXXXX       , XXXXXXX       ,LCTL_T(KC_TAB),
-             KC_DEL  ,        KC_PGDN ,        KC_UP   ,       KC_PGUP , XXXXXXX,  KC_PAUS, KC_MUTE       , KC_VOLU       , KC_VOLD       ,      KC_ESC
-  ),
-  [7] = LAYOUT_ortho_3x10(
-             KC_RSFT ,        KC_RALT ,        KC_RGUI ,       KC_SCRL , KC_PSCR,  KC_CAPS, _______       , KC_LGUI       , KC_LALT       ,      KC_LSFT ,
-             KC_ENT  ,        KC_INS  ,        KC_MHEN ,       KC_SPC  , KC_HENK,  _______, _______       , XXXXXXX       , XXXXXXX       ,      KC_LCTL ,
-             KC_BSPC ,        KC_EQL  ,        KC_MINS ,       KC_GRV  , KC_ESC ,  KC_PAUS, _______       , _______       , _______       ,      KC_ESC
-  )
-
 };
 
 // =================================================================================
@@ -385,29 +335,18 @@ combo_t key_combos[] = {
   [IO_DEL]  = COMBO(io_combo, KC_DEL),
   [QW_ESC]  = COMBO(qw_combo, KC_ESC),
   [WE_GRV]  = COMBO(we_combo, KC_GRV),
-  [QP_TGL]  = COMBO(qp_combo, TG(4))
+  [QP_TGL]  = COMBO(qp_combo, KC_REVS)
 };
 
 
 // =================================================================================
 // rolling press to hold
 // =================================================================================
-/*
-__attribute__((weak)) void register_code(uint8_t code) {
-__attribute__((weak)) void unregister_code(uint8_t code) {
-__attribute__((weak)) void tap_code(uint8_t code) {
-
-__attribute__((weak)) void register_mods(uint8_t mods) {
-__attribute__((weak)) void unregister_mods(uint8_t mods) {
-__attribute__((weak)) void register_weak_mods(uint8_t mods) {
-__attribute__((weak)) void unregister_weak_mods(uint8_t mods) {
-MOD_RSFT
- * */
 
 #define ROLLING_TO_MOD_TIMEOUT 30 // wait time for pending rolling to mod.(ms)
 #define PENDING_TAP_CAPACITY 4
 
-//static bool reversed_keymap = false;
+static bool reversed_keymap = false;
 
 static uint8_t pressed_key_count = 0;
 
@@ -593,10 +532,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     uint8_t row = record->event.key.row;
     uint8_t col = record->event.key.col;
-//    if (reversed_keymap) {
-//        row = MATRIX_ROWS - row;
-//        col = MATRIX_COLS - col;
-//    }
+    if (reversed_keymap) {
+        row = MATRIX_ROWS - row;
+        col = MATRIX_COLS - col;
+        keycode = keymaps_s[get_highest_layer(layer_state)][row][col];
+
+        record->event.key.row = row;
+        record->event.key.col = col;
+        record->keycode       = keycode;
+    }
 
     if (pressed_key_count == 0) print("---\n");
     if      (record->event.pressed) pressed_key_count++;
@@ -607,6 +551,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     bool is_mod_tap_key = (tap_hold_get_tap_keycode(keycode) != keycode);
     if (!is_mod_tap_key && record->event.pressed && !exist_pending_key()) return true;
+
+    if (keycode == KC_REVS) {
+        if (!record->event.pressed) reversed_keymap = !reversed_keymap;
+        return true;
+    }
 
     uint8_t slot = 0;
     if (record->event.pressed) {
@@ -714,24 +663,5 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     return false;
 }
-
-
-//// キー入力がない間も、タイムアウト処理を呼び出すために使用
-//void matrix_scan_user(void) {
-//    uint16_t passed_time = timer_elapsed(release_time);
-//    if ((delayed_tap_key != 0 || pending_layer != 0) && passed_time > ROLLING_TO_MOD_TIMEOUT) {
-//        xprintf("pending_time_out: %u - %u,%u\n", passed_time, delayed_tap_key, pending_layer);
-//        if (delayed_tap_key != 0) {
-//            tap_code(delayed_tap_key);
-//        }
-//
-//        if (pending_layer != 0) {
-//            layer_off(pending_layer);
-//        }
-//
-//        delayed_tap_key = 0;
-//        pending_layer = 0;
-//    }
-//}
 
 
