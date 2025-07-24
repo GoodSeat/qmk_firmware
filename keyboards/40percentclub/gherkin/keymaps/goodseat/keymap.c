@@ -400,6 +400,9 @@ combo_t key_combos[] = {
 // =================================================================================
 // rolling press to hold
 // =================================================================================
+#define TAP_REPEAT_TERM 300
+static uint16_t keycode_last_tap = 0;
+static uint16_t time_last_tap    = 0;
 
 #define ROLLING_TO_MOD_TIMEOUT 27 // wait time for pending rolling to mod.(ms)
 #define PENDING_TAP_CAPACITY 4
@@ -413,6 +416,7 @@ typedef struct {
     uint8_t  slot_id;                    // このスロットの識別番号
     bool     is_active;                  // このスロットが使用中か
     bool     is_pending;                 // tap-pressが保留中か
+    bool     is_key_repeat;              // hold時、keyrepeatと判定すべきか
     uint16_t keycode;                    // 元のキーコード
     uint8_t  krow;                       // キーの行
     uint8_t  kcol;                       // キーの列
@@ -430,6 +434,7 @@ void keyboard_post_init_user(void) {
         pending_taps[i].slot_id               = i;
         pending_taps[i].is_active             = false;
         pending_taps[i].is_pending            = false;
+        pending_taps[i].is_key_repeat         = false;
         pending_taps[i].keycode               = 0;
         pending_taps[i].krow                  = 0;
         pending_taps[i].kcol                  = 0;
@@ -453,11 +458,12 @@ uint16_t to_current_layer_keycode(uint8_t slot) {
 }
 
 
-uint8_t add_pressed_key(uint16_t keycode, uint8_t row, uint8_t col) {
+uint8_t add_pressed_key(uint16_t keycode, uint8_t row, uint8_t col, bool key_repeat) {
     for (uint8_t i = 0; i < PENDING_TAP_CAPACITY; i++) {
         if (!pending_taps[i].is_active) {
             pending_taps[i].is_active             = true;
             pending_taps[i].is_pending            = true;
+            pending_taps[i].is_key_repeat         = key_repeat;
             pending_taps[i].keycode               = keycode;
             pending_taps[i].krow                  = row;
             pending_taps[i].kcol                  = col;
@@ -575,7 +581,14 @@ uint32_t delayed_key_tap_callback(uint32_t trigger_time, void *cb_arg) {
     pending_taps[slot].tapping_pending_token = 0;
     pending_taps[slot].rolling_pending_token = 0;
 
-    register_keycode_of_slot(slot);
+    if (pending_taps[slot].is_key_repeat) {
+        uint16_t k  = to_current_layer_keycode(slot);
+        uint16_t k2 = tap_hold_get_tap_keycode(k);
+        register_code_print(k2);
+        pending_taps[slot].keycode_registerd = k2;
+    } else {
+        register_keycode_of_slot(slot);
+    }
 
     resolve_pending_normal_keys_if_no_mod_pending();
     return 0; // always don't recall.
@@ -599,6 +612,7 @@ uint32_t delayed_key_rolling_callback(uint32_t trigger_time, void *cb_arg) {
 // =================================================================================
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     uint8_t i;
+    if (!record->event.pressed) keycode_last_tap = 0;
 
     uint8_t row = record->event.key.row;
     uint8_t col = record->event.key.col;
@@ -639,10 +653,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     bool is_mod_tap_key = (tap_hold_get_tap_keycode(keycode) != keycode);
     if (!is_mod_tap_key && record->event.pressed && !exist_pending_key()) return true;
 
+    // key repeat by double tap.
+    bool is_key_repeat = false;
+    if (record->event.pressed && is_mod_tap_key && timer_elapsed(time_last_tap) < TAP_REPEAT_TERM) {
+        if (tap_hold_get_tap_keycode(keycode) == keycode_last_tap) {
+            is_key_repeat = true;
+#ifdef KEYMAP_INTROSPECTION_ENABLE
+            print(" key repeat by double tap.\n");
+#endif // KEYMAP_INTROSPECTION_ENABLE
+        }
+    }
+
     uint8_t slot = 0;
     bool existYounger = false;
     if (record->event.pressed) {
-        slot = add_pressed_key(keycode, row, col);
+        slot = add_pressed_key(keycode, row, col, is_key_repeat);
     } else {
         slot = remove_pressed_key(row, col, &existYounger);
     }
@@ -691,7 +716,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     }
                 }
 
-                unregister_keycode_of_slot(slot);
+                if (pending_taps[slot].keycode_registerd == 0) unregister_keycode_of_slot(slot);
             }
 
             pending_taps[slot].is_active = false;
@@ -729,6 +754,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             for (i = 0; i < PENDING_TAP_CAPACITY; ++i) {
                 if (!pending_taps[i].is_active || !pending_taps[i].is_pending) continue;
                 if (pending_taps[i].tapping_pending_token == 0 && pending_taps[i].rolling_pending_token == 0) continue;
+                if (pending_taps[i].rolling_pending_token != 0 && pending_taps[i].release_time < pending_taps[slot].pressed_time) continue;
 
                 if (pending_taps[i].pressed_time < pending_taps[slot].pressed_time || pending_taps[i].rolling_pending_token != 0) {
                     pending_taps[i].is_pending = false;
@@ -736,13 +762,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
 
-            uint16_t sendKeycode = to_current_layer_keycode(slot);
-            tap_code_print(tap_hold_get_tap_keycode(sendKeycode));
+            uint16_t sendKeycode = tap_hold_get_tap_keycode(to_current_layer_keycode(slot));
+            tap_code_print(sendKeycode);
+            keycode_last_tap = sendKeycode;
+            time_last_tap    = timer_read();
 
             // Mod扱いしたキーのリリースを再現
             for (i = 0; i < PENDING_TAP_CAPACITY; ++i) {
                 if (!pending_taps[i].is_active) continue;
                 if (pending_taps[i].tapping_pending_token == 0 && pending_taps[i].rolling_pending_token == 0) continue;
+                if (pending_taps[i].rolling_pending_token != 0 && pending_taps[i].release_time < pending_taps[slot].pressed_time) continue;
 
                 if (pending_taps[i].rolling_pending_token != 0) {
                     pending_taps[i].is_active = false;
