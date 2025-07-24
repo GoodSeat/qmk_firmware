@@ -37,7 +37,8 @@ enum my_keycodes {
   , KC_L2_F
   , KC_L3_D
 
-  , KC_REVS
+  , KC_REVS1
+  , KC_REVS2
 };
 
 uint16_t tap_hold_get_tap_keycode(uint16_t keycode) {
@@ -242,7 +243,8 @@ const char* get_keycode_str(uint16_t keycode) {
     case KC_L2_F : sprintf(keycode_str, "KC_L2_F"); break;
     case KC_L3_D : sprintf(keycode_str, "KC_L3_D"); break;
 
-    case KC_REVS : sprintf(keycode_str, "KC_REVS"); break;
+    case KC_REVS1: sprintf(keycode_str, "KC_REVS1"); break;
+    case KC_REVS2: sprintf(keycode_str, "KC_REVS2"); break;
 
     default: sprintf(keycode_str, "KC_%u", keycode); break;
     }
@@ -253,13 +255,13 @@ const char* get_keycode_str(uint16_t keycode) {
 
 //  L0
 //  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
-//  |Q     <1>|W     <2>|E        |R        |T        |Y        |U     <5>|I     <6>|O        |P        |
+//  |Q      <1>W      <2>E        |R        |T        |Y        |U      <5>I      <6>O        |P        |
 //  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
-//  |A / Ctrl |S        |D / L3   |F / L2   |G        |H        |J     <3>|K     <4>|L        |: / Ctrl |
+//  |A / Ctrl |S        |D / L3   |F / L2   |G        |H        |J      <3>K      <4>L        |: / Ctrl |
 //  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
 //  |Z / Shft |X / Alt  |C / Win  |V / L1   |B        |N        |M / L1   |, / Win  |. / Alt  |/ / Shft |
 //  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
-//    Combos:<1> Esc, <2> `, <3> Space, <4> Enter, <5> BS, <6> Del
+//    Combos: <1> Esc   <2> `   <3> Space   <4> Enter   <5> BS   <6> Del
 //
 //  L1
 //  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
@@ -274,7 +276,7 @@ const char* get_keycode_str(uint16_t keycode) {
 //  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
 //  |Esc      |Vol-     |Vol+     |Mute     |Pause    |XXXXXX   |PageUp   |Up       |PageDw   |Del      |
 //  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
-//  |Tab/ Ctrl|XXXXXX   |XXXXXX   |         |         |Home     |Left     |Down     |Right    |Ctrl     |
+//  |Tab/ Ctrl|XXXXXX   |XXXXXX   |    *    |         |Home     |Left     |Down     |Right    |Ctrl     |
 //  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
 //  |Shft     |Alt      |Win      |         |         |End      |         |Win      |App/ Alt |Shft     |
 //  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
@@ -283,7 +285,7 @@ const char* get_keycode_str(uint16_t keycode) {
 //  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
 //  |Esc      |         |         |         |Pause    |Esc      |`        |-        |=        |BS       |
 //  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
-//  |Ctrl     |XXXXXX   |XXXXXX   |         |         |Conv     |Space    |NoConv   |Ins      |Enter    |
+//  |Ctrl     |XXXXXX   |    *    |         |         |Conv     |Space    |NoConv   |Ins      |Enter    |
 //  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
 //  |Shft     |Alt      |Win      |         |CapsLock |PrSc     |ScLk     |Win      |Alt      |Shft     |
 //  +---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
@@ -314,6 +316,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 };
 
+// keymapsを参照しても正しいキーコードを取得できないため、keymapと同じ配列をstaticで定義しておく
 static const uint16_t keymaps_s[][MATRIX_ROWS][MATRIX_COLS] = {
   //               V              V              V              V              V              V              V              V              V              V
   //          1         2         3         4         5         6         7         8         9         A         B         C         D         E         F
@@ -379,21 +382,21 @@ const uint16_t PROGMEM dp_combo[] = {KC_RA_DT, KC_RG_CM, COMBO_END};
 const uint16_t PROGMEM zq_combo[] = {KC_LS_Z , KC_RS_SL, COMBO_END};
 
 combo_t key_combos[] = {
-  [JK_SPC ] = COMBO(jk_combo, KC_SPC ),
-  [KL_ENT ] = COMBO(kl_combo, KC_ENT ),
-  [UI_BSPC] = COMBO(ui_combo, KC_BSPC),
-  [IO_DEL ] = COMBO(io_combo, KC_DEL ),
-  [QW_ESC ] = COMBO(qw_combo, KC_ESC ),
-  [WE_GRV ] = COMBO(we_combo, KC_GRV ),
-  [QP_TGL ] = COMBO(qp_combo, KC_REVS),
+  [JK_SPC ] = COMBO(jk_combo, KC_SPC  ),
+  [KL_ENT ] = COMBO(kl_combo, KC_ENT  ),
+  [UI_BSPC] = COMBO(ui_combo, KC_BSPC ),
+  [IO_DEL ] = COMBO(io_combo, KC_DEL  ),
+  [QW_ESC ] = COMBO(qw_combo, KC_ESC  ),
+  [WE_GRV ] = COMBO(we_combo, KC_GRV  ),
+  [QP_TGL ] = COMBO(qp_combo, KC_REVS1),
 
-  [FD_SPC ] = COMBO(fd_combo, KC_SPC ),
-  [DS_ENT ] = COMBO(ds_combo, KC_ENT ),
-  [VC_BSPC] = COMBO(vc_combo, KC_BSPC),
-  [CX_DEL ] = COMBO(cx_combo, KC_DEL ),
-  [qd_ESC ] = COMBO(qd_combo, KC_ESC ),
-  [dp_GRV ] = COMBO(dp_combo, KC_GRV ),
-  [Zq_TGL ] = COMBO(zq_combo, KC_REVS)
+  [FD_SPC ] = COMBO(fd_combo, KC_SPC  ),
+  [DS_ENT ] = COMBO(ds_combo, KC_ENT  ),
+  [VC_BSPC] = COMBO(vc_combo, KC_BSPC ),
+  [CX_DEL ] = COMBO(cx_combo, KC_DEL  ),
+  [qd_ESC ] = COMBO(qd_combo, KC_ESC  ),
+  [dp_GRV ] = COMBO(dp_combo, KC_GRV  ),
+  [Zq_TGL ] = COMBO(zq_combo, KC_REVS2)
 };
 
 
@@ -404,7 +407,7 @@ combo_t key_combos[] = {
 static uint16_t keycode_last_tap = 0;
 static uint16_t time_last_tap    = 0;
 
-#define ROLLING_TO_MOD_TIMEOUT 27 // wait time for pending rolling to mod.(ms)
+#define ROLLING_TO_MOD_TIMEOUT 30 // wait time for pending rolling to mod.(ms)
 #define PENDING_TAP_CAPACITY 4
 
 static bool reversed_keymap = false;
@@ -446,7 +449,7 @@ void keyboard_post_init_user(void) {
     }
 }
 
-uint16_t to_current_layer_keycode(uint8_t slot) {
+uint16_t to_current_layer_keycode_on_slot(uint8_t slot) {
     uint8_t l = get_highest_layer(layer_state);
     uint8_t r = pending_taps[slot].krow;
     uint8_t c = pending_taps[slot].kcol;
@@ -537,13 +540,13 @@ void layer_off_print(int16_t layer) {
     layer_off(layer);
 }
 
-void register_keycode_of_slot(uint8_t slot) {
+void register_keycode_of_hold_on_slot(uint8_t slot) {
     uint16_t mod_key  = tap_hold_get_hold_keycode(pending_taps[slot].keycode);
     uint8_t  layer_no = tap_hold_get_hold_layer  (pending_taps[slot].keycode);
     if      (mod_key  != 0) register_code_print(mod_key );
     else if (layer_no != 0) layer_on_print     (layer_no);
 }
-void unregister_keycode_of_slot(uint8_t slot) {
+void unregister_keycode_of_hold_on_slot(uint8_t slot) {
     uint16_t mod_key  = tap_hold_get_hold_keycode(pending_taps[slot].keycode);
     uint8_t  layer_no = tap_hold_get_hold_layer  (pending_taps[slot].keycode);
     if      (mod_key  != 0) unregister_code_print(mod_key );
@@ -563,7 +566,7 @@ void resolve_pending_normal_keys_if_no_mod_pending(void) {
     for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
         if (!pending_taps[i].is_active) continue;
         if (pending_taps[i].is_pending) {
-            uint16_t k = to_current_layer_keycode(i);
+            uint16_t k = to_current_layer_keycode_on_slot(i);
             register_code_print(k);
             pending_taps[i].is_pending = false;
             pending_taps[i].keycode_registerd = k;
@@ -582,12 +585,12 @@ uint32_t delayed_key_tap_callback(uint32_t trigger_time, void *cb_arg) {
     pending_taps[slot].rolling_pending_token = 0;
 
     if (pending_taps[slot].is_key_repeat) {
-        uint16_t k  = to_current_layer_keycode(slot);
+        uint16_t k  = to_current_layer_keycode_on_slot(slot);
         uint16_t k2 = tap_hold_get_tap_keycode(k);
         register_code_print(k2);
         pending_taps[slot].keycode_registerd = k2;
     } else {
-        register_keycode_of_slot(slot);
+        register_keycode_of_hold_on_slot(slot);
     }
 
     resolve_pending_normal_keys_if_no_mod_pending();
@@ -617,15 +620,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     uint8_t row = record->event.key.row;
     uint8_t col = record->event.key.col;
     if (row == 0 && col == 0 && keymaps_s[get_highest_layer(layer_state)][row][col] != keycode) {
-#ifdef KEYMAP_INTROSPECTION_ENABLE
-// ============================================================================================//
+#ifdef KEYMAP_INTROSPECTION_ENABLE // ---------------------------------------------------------//
         if (record->event.pressed) uprintf("Combo Press  : %s\n", get_keycode_str(keycode));   //
         else                       uprintf("Combo Release: %s\n", get_keycode_str(keycode));   //
-// ============================================================================================//
-#endif // KEYMAP_INTROSPECTION_ENABLE
-        if (keycode == KC_REVS && !record->event.pressed) {
-            reversed_keymap = !reversed_keymap;
-        }
+#endif // KEYMAP_INTROSPECTION_ENABLE ---------------------------------------------------------//
+        if (keycode == KC_REVS1 && !record->event.pressed) reversed_keymap = true;
+        if (keycode == KC_REVS2 && !record->event.pressed) reversed_keymap = false;
         return true;
     }
 
@@ -643,12 +643,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if      (record->event.pressed) pressed_key_count++;
     else if (pressed_key_count > 0) pressed_key_count--;
 
-#ifdef KEYMAP_INTROSPECTION_ENABLE
-// ========================================================================================================//
+#ifdef KEYMAP_INTROSPECTION_ENABLE // ---------------------------------------------------------------------//
     if (record->event.pressed) uprintf("Key Press  : %s[%u][%u]\n", get_keycode_str(keycode), row, col);   //
     else                       uprintf("Key Release: %s[%u][%u]\n", get_keycode_str(keycode), row, col);   //
-// ========================================================================================================//
-#endif // KEYMAP_INTROSPECTION_ENABLE
+#endif // KEYMAP_INTROSPECTION_ENABLE ---------------------------------------------------------------------//
 
     bool is_mod_tap_key = (tap_hold_get_tap_keycode(keycode) != keycode);
     if (!is_mod_tap_key && record->event.pressed && !exist_pending_key()) return true;
@@ -658,9 +656,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed && is_mod_tap_key && timer_elapsed(time_last_tap) < TAP_REPEAT_TERM) {
         if (tap_hold_get_tap_keycode(keycode) == keycode_last_tap) {
             is_key_repeat = true;
-#ifdef KEYMAP_INTROSPECTION_ENABLE
-            print(" key repeat by double tap.\n");
-#endif // KEYMAP_INTROSPECTION_ENABLE
+#ifdef KEYMAP_INTROSPECTION_ENABLE // -----------------//
+            print(" key repeat by double tap.\n");     //
+#endif // KEYMAP_INTROSPECTION_ENABLE -----------------//
         }
     }
 
@@ -673,14 +671,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     if (!is_mod_tap_key && slot >= PENDING_TAP_CAPACITY) return true; // スロットに未登録のキー
 
-#ifdef KEYMAP_INTROSPECTION_ENABLE
-    xprintf(" <pressed_key_count: %u> slot:%u\n", pressed_key_count, slot);
-#endif // KEYMAP_INTROSPECTION_ENABLE
+#ifdef KEYMAP_INTROSPECTION_ENABLE // ---------------------------------------//
+    xprintf(" <pressed_key_count: %u> slot:%u\n", pressed_key_count, slot);  //
+#endif // KEYMAP_INTROSPECTION_ENABLE ---------------------------------------//
 
     if (slot >= PENDING_TAP_CAPACITY) {
-#ifdef KEYMAP_INTROSPECTION_ENABLE
-        xprintf(" ### ACTIVE SLOT COUNT OVER %u ###\n", PENDING_TAP_CAPACITY);
-#endif // KEYMAP_INTROSPECTION_ENABLE
+#ifdef KEYMAP_INTROSPECTION_ENABLE // ------------------------------------------//
+        xprintf(" ### ACTIVE SLOT COUNT OVER %u ###\n", PENDING_TAP_CAPACITY);  //
+#endif // KEYMAP_INTROSPECTION_ENABLE ------------------------------------------//
         return true;
     }
     if (record->event.pressed && reversed_keymap) { // 押下時のレイヤーに基づくキーコードを再現
@@ -708,7 +706,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         cancel_deferred_exec(pending_taps[i].tapping_pending_token);
                         pending_taps[i].tapping_pending_token = 0;
 
-                        uint16_t k  = to_current_layer_keycode(i);
+                        uint16_t k  = to_current_layer_keycode_on_slot(i);
                         uint16_t k2 = tap_hold_get_tap_keycode(k);
                         register_code_print(k2);
                         pending_taps[i].is_pending = false;
@@ -716,21 +714,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     }
                 }
 
-                if (pending_taps[slot].keycode_registerd == 0) unregister_keycode_of_slot(slot);
+                if (pending_taps[slot].keycode_registerd == 0) unregister_keycode_of_hold_on_slot(slot);
             }
 
             pending_taps[slot].is_active = false;
 
             if (pending_taps[slot].keycode_registerd != 0) {
                 unregister_code_print(pending_taps[slot].keycode_registerd);
-#ifdef KEYMAP_INTROSPECTION_ENABLE
-                print("    !is_pending -> return false;\n");
-#endif // KEYMAP_INTROSPECTION_ENABLE
+#ifdef KEYMAP_INTROSPECTION_ENABLE // ---------------------------//
+                print("    !is_pending -> return false;\n");     //
+#endif // KEYMAP_INTROSPECTION_ENABLE ---------------------------//
                 return false;
             } else {
-#ifdef KEYMAP_INTROSPECTION_ENABLE
-                print("    !is_pending -> return true;\n");
-#endif // KEYMAP_INTROSPECTION_ENABLE
+#ifdef KEYMAP_INTROSPECTION_ENABLE // ---------------------------//
+                print("    !is_pending -> return true;\n");      //
+#endif // KEYMAP_INTROSPECTION_ENABLE ---------------------------//
                 return true;
             }
         } else { // 保留中キーのリリース時
@@ -739,9 +737,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pending_taps[slot].tapping_pending_token = 0;
 
                 if (existYounger) {
-#ifdef KEYMAP_INTROSPECTION_ENABLE
-                    print("     existYounger, start rolling pending.\n");
-#endif // KEYMAP_INTROSPECTION_ENABLE
+#ifdef KEYMAP_INTROSPECTION_ENABLE // ----------------------------------------//
+                    print("     existYounger, start rolling pending.\n");     //
+#endif // KEYMAP_INTROSPECTION_ENABLE ----------------------------------------//
                     pending_taps[slot].rolling_pending_token = defer_exec(ROLLING_TO_MOD_TIMEOUT, delayed_key_rolling_callback, (void*)(uintptr_t)pending_taps[slot].slot_id);
                     return false;
                 }
@@ -750,19 +748,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             pending_taps[slot].is_pending = false;
             pending_taps[slot].is_active  = false;
 
-            // 自分よりpressの古いmod-tapキー、あるいは30ms以内に離された保留中のmod-tapキーがあれば、それをMod扱いとする
+            // 自分よりpressの古いmod-tapキー、あるいはROLLING_TO_MOD_TIMEOUT以内に離された保留中のmod-tapキーがあれば、それをMod扱いとする
             for (i = 0; i < PENDING_TAP_CAPACITY; ++i) {
                 if (!pending_taps[i].is_active || !pending_taps[i].is_pending) continue;
                 if (pending_taps[i].tapping_pending_token == 0 && pending_taps[i].rolling_pending_token == 0) continue;
-                if (pending_taps[i].rolling_pending_token != 0 && pending_taps[i].release_time < pending_taps[slot].pressed_time) continue;
-
+                if (pending_taps[i].rolling_pending_token != 0 && pending_taps[i].release_time < pending_taps[slot].pressed_time) {
+                    uint16_t kp = tap_hold_get_tap_keycode(to_current_layer_keycode_on_slot(i));
+#ifdef KEYMAP_INTROSPECTION_ENABLE // --------------------------------------------------------//
+                    xprintf("     tap before very short tap :%s\n", get_keycode_str(kp));     //
+#endif // KEYMAP_INTROSPECTION_ENABLE --------------------------------------------------------//
+                    tap_code_print(kp);
+                    pending_taps[i].is_active  = false;
+                    pending_taps[i].is_pending = false;
+                    cancel_deferred_exec(pending_taps[i].rolling_pending_token);
+                    pending_taps[i].rolling_pending_token = 0;
+                    continue;
+                }
                 if (pending_taps[i].pressed_time < pending_taps[slot].pressed_time || pending_taps[i].rolling_pending_token != 0) {
                     pending_taps[i].is_pending = false;
-                    register_keycode_of_slot(i);
+                    register_keycode_of_hold_on_slot(i);
                 }
             }
 
-            uint16_t sendKeycode = tap_hold_get_tap_keycode(to_current_layer_keycode(slot));
+            uint16_t sendKeycode = tap_hold_get_tap_keycode(to_current_layer_keycode_on_slot(slot));
             tap_code_print(sendKeycode);
             keycode_last_tap = sendKeycode;
             time_last_tap    = timer_read();
@@ -771,11 +779,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             for (i = 0; i < PENDING_TAP_CAPACITY; ++i) {
                 if (!pending_taps[i].is_active) continue;
                 if (pending_taps[i].tapping_pending_token == 0 && pending_taps[i].rolling_pending_token == 0) continue;
-                if (pending_taps[i].rolling_pending_token != 0 && pending_taps[i].release_time < pending_taps[slot].pressed_time) continue;
 
                 if (pending_taps[i].rolling_pending_token != 0) {
                     pending_taps[i].is_active = false;
-                    unregister_keycode_of_slot(i);
+                    unregister_keycode_of_hold_on_slot(i);
 
                     cancel_deferred_exec(pending_taps[i].rolling_pending_token);
                     pending_taps[i].rolling_pending_token = 0;
