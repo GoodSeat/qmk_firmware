@@ -407,7 +407,7 @@ combo_t key_combos[] = {
 static uint16_t keycode_last_tap = 0;
 static uint16_t time_last_tap    = 0;
 
-#define ROLLING_TO_MOD_TIMEOUT 30 // wait time for pending rolling to mod.(ms)
+#define ROLLING_TO_MOD_TIMEOUT 40 // wait time for pending rolling to mod.(ms)
 #define PENDING_TAP_CAPACITY 4
 
 static bool reversed_keymap = false;
@@ -485,6 +485,7 @@ uint16_t remove_pressed_key(uint8_t row, uint8_t col, bool *existYounger) {
     uint16_t t;
     *existYounger = false;
     for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
+        if (!pending_taps[i].is_active) continue;
         if (pending_taps[i].krow != row || pending_taps[i].kcol != col) continue;
         pending_taps[i].release_time = timer_read();
         t = pending_taps[i].pressed_time;
@@ -681,9 +682,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #endif // KEYMAP_INTROSPECTION_ENABLE ------------------------------------------//
         return true;
     }
-    if (record->event.pressed && reversed_keymap) { // 押下時のレイヤーに基づくキーコードを再現
+    if (!record->event.pressed && reversed_keymap) { // 押下時のレイヤーに基づくキーコードを再現
         keycode = pending_taps[slot].keycode;
         record->keycode = keycode;
+        is_mod_tap_key = (tap_hold_get_tap_keycode(keycode) != keycode);
+#ifdef KEYMAP_INTROSPECTION_ENABLE // ---------------------------------------//
+        xprintf("    reproduced keycode = %s\n", get_keycode_str(keycode));  //
+#endif // KEYMAP_INTROSPECTION_ENABLE ---------------------------------------//
     }
 
     // ------------------------------------------------------------------------------------------------------------------
@@ -736,7 +741,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 cancel_deferred_exec(pending_taps[slot].tapping_pending_token);
                 pending_taps[slot].tapping_pending_token = 0;
 
-                if (existYounger) {
+                if (existYounger && timer_elapsed(pending_taps[slot].pressed_time) > ROLLING_TO_MOD_TIMEOUT) {
 #ifdef KEYMAP_INTROSPECTION_ENABLE // ----------------------------------------//
                     print("     existYounger, start rolling pending.\n");     //
 #endif // KEYMAP_INTROSPECTION_ENABLE ----------------------------------------//
