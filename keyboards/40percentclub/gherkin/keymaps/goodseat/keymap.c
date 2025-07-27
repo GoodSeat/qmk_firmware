@@ -407,7 +407,7 @@ combo_t key_combos[] = {
 static uint16_t keycode_last_tap = 0;
 static uint16_t time_last_tap    = 0;
 
-#define ROLLING_TO_MOD_TIMEOUT 40 // wait time for pending rolling to mod.(ms)
+#define ROLLING_TO_MOD_TIMEOUT 25 // wait time for pending rolling to mod.(ms)
 #define PENDING_TAP_CAPACITY 4
 
 static bool reversed_keymap = false;
@@ -431,6 +431,7 @@ typedef struct {
 } pending_tap_t;
 
 static pending_tap_t pending_taps[PENDING_TAP_CAPACITY];
+static uint16_t active_combos[PENDING_TAP_CAPACITY];
 
 void keyboard_post_init_user(void) {
     for (uint8_t i = 0; i < PENDING_TAP_CAPACITY; i++) {
@@ -446,6 +447,8 @@ void keyboard_post_init_user(void) {
         pending_taps[i].release_time          = 0;
         pending_taps[i].tapping_pending_token = 0;
         pending_taps[i].rolling_pending_token = 0;
+
+        active_combos[i] = 0;
     }
 }
 
@@ -621,13 +624,34 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     uint8_t row = record->event.key.row;
     uint8_t col = record->event.key.col;
     if (row == 0 && col == 0 && keymaps_s[get_highest_layer(layer_state)][row][col] != keycode) {
-#ifdef KEYMAP_INTROSPECTION_ENABLE // ---------------------------------------------------------//
-        if (record->event.pressed) uprintf("Combo Press  : %s\n", get_keycode_str(keycode));   //
-        else                       uprintf("Combo Release: %s\n", get_keycode_str(keycode));   //
-#endif // KEYMAP_INTROSPECTION_ENABLE ---------------------------------------------------------//
-        if (keycode == KC_REVS1 && !record->event.pressed) reversed_keymap = true;
-        if (keycode == KC_REVS2 && !record->event.pressed) reversed_keymap = false;
-        return true;
+        bool isCombo = false;
+        if (record->event.pressed) {
+            for (uint8_t i = 0; i < PENDING_TAP_CAPACITY; i++) {
+                if (active_combos[i] == 0) {
+                    isCombo = true;
+                    active_combos[i] = keycode;
+                    break;
+                }
+            }
+        } else {
+            for (uint8_t i = 0; i < PENDING_TAP_CAPACITY; i++) {
+                if (active_combos[i] == keycode) {
+                    isCombo = true;
+                    active_combos[i] = 0;
+                    break;
+                }
+            }
+        }
+
+        if (isCombo) {
+#ifdef KEYMAP_INTROSPECTION_ENABLE // -------------------------------------------------------------//
+            if (record->event.pressed) uprintf("Combo Press  : %s\n", get_keycode_str(keycode));   //
+            else                       uprintf("Combo Release: %s\n", get_keycode_str(keycode));   //
+#endif // KEYMAP_INTROSPECTION_ENABLE -------------------------------------------------------------//
+            if (keycode == KC_REVS1 && !record->event.pressed) reversed_keymap = true;
+            if (keycode == KC_REVS2 && !record->event.pressed) reversed_keymap = false;
+            return true;
+        }
     }
 
     if (reversed_keymap) {
