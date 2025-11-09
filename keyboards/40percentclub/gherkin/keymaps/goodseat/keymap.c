@@ -8,37 +8,6 @@
 #define KC_HENK KC_INT4
 #define KC_MHEN KC_INT5
 
-uint16_t tap_hold_get_tap_keycode(uint16_t keycode) {
-    if (keycode >= QK_MOD_TAP && keycode <= QK_MOD_TAP_MAX) {
-        return QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
-    }
-    if (keycode >= QK_LAYER_TAP && keycode <= QK_LAYER_TAP_MAX) {
-        return QK_LAYER_TAP_GET_TAP_KEYCODE(keycode);
-    }
-    return keycode;
-}
-uint16_t tap_hold_get_hold_keycode(uint16_t keycode) {
-    if (keycode >= QK_MOD_TAP && keycode <= QK_MOD_TAP_MAX) {
-        switch(QK_MOD_TAP_GET_MODS(keycode)) {
-            case MOD_LCTL: return KC_LCTL;
-            case MOD_LSFT: return KC_LSFT;
-            case MOD_LALT: return KC_LALT;
-            case MOD_LGUI: return KC_LGUI;
-            case MOD_RCTL: return KC_RCTL;
-            case MOD_RSFT: return KC_RSFT;
-            case MOD_RALT: return KC_RALT;
-            case MOD_RGUI: return KC_RGUI;
-        }
-    }
-    return 0;
-}
-uint8_t tap_hold_get_hold_layer(uint16_t keycode) {
-    if (keycode >= QK_LAYER_TAP && keycode <= QK_LAYER_TAP_MAX) {
-        return QK_LAYER_TAP_GET_LAYER(keycode);
-    }
-    return 0;
-}
-
 
 #ifdef KEYMAP_INTROSPECTION_ENABLE
 const char* get_keycode_str(uint16_t keycode) {
@@ -374,6 +343,38 @@ bool exist_pending_key(void) {
 }
 
 // =================================================================================
+
+uint16_t tap_hold_get_tap_keycode(uint16_t keycode) {
+    if (keycode >= QK_MOD_TAP && keycode <= QK_MOD_TAP_MAX) {
+        return QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
+    }
+    if (keycode >= QK_LAYER_TAP && keycode <= QK_LAYER_TAP_MAX) {
+        return QK_LAYER_TAP_GET_TAP_KEYCODE(keycode);
+    }
+    return keycode;
+}
+uint16_t tap_hold_get_hold_keycode(uint16_t keycode) {
+    if (keycode >= QK_MOD_TAP && keycode <= QK_MOD_TAP_MAX) {
+        switch(QK_MOD_TAP_GET_MODS(keycode)) {
+            case MOD_LCTL: return KC_LCTL;
+            case MOD_LSFT: return KC_LSFT;
+            case MOD_LALT: return KC_LALT;
+            case MOD_LGUI: return KC_LGUI;
+            case MOD_RCTL: return KC_RCTL;
+            case MOD_RSFT: return KC_RSFT;
+            case MOD_RALT: return KC_RALT;
+            case MOD_RGUI: return KC_RGUI;
+        }
+    }
+    return 0;
+}
+uint8_t tap_hold_get_hold_layer(uint16_t keycode) {
+    if (keycode >= QK_LAYER_TAP && keycode <= QK_LAYER_TAP_MAX) {
+        return QK_LAYER_TAP_GET_LAYER(keycode);
+    }
+    return 0;
+}
+
 void tap_code_print(uint16_t keycode) {
 #ifdef KEYMAP_INTROSPECTION_ENABLE
     uprintf("  tap_code_print: %s\n", get_keycode_str(keycode));
@@ -541,7 +542,11 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
     // ------------------------------------------------------------------------------------------------------------------
     if (record->event.pressed) {
         if (is_mod_tap_key) {
-            pending_taps[slot].tapping_pending_token = defer_exec(TAPPING_TERM, delayed_key_tap_callback, (void*)(uintptr_t)pending_taps[slot].slot_id);
+            if (is_key_repeat) {
+                pending_taps[slot].tapping_pending_token = defer_exec(TAPPING_TERM * 3, delayed_key_tap_callback, (void*)(uintptr_t)pending_taps[slot].slot_id);
+            } else {
+                pending_taps[slot].tapping_pending_token = defer_exec(TAPPING_TERM, delayed_key_tap_callback, (void*)(uintptr_t)pending_taps[slot].slot_id);
+            }
         }
         return false;
     } else {
