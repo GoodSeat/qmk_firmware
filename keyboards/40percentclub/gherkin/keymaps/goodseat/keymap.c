@@ -554,20 +554,22 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         if (!pending_taps[slot].is_pending) { // 保留解決済キーのリリース時
             if (is_mod_tap_key) { // tapping term以上押されたmod-tapキーが離された時
-                for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
-                    if (i == slot || !pending_taps[i].is_active) continue;
-                    if (pending_taps[i].tapping_pending_token != 0                           // mod-tapキーで、
-                     && pending_taps[i].pressed_time > pending_taps[slot].pressed_time       // このキーより後に押され、
-                     && timer_elapsed(pending_taps[i].pressed_time) > ROLLING_TO_MOD_TIMEOUT // ROLLING_TO_MOD_TIMEOUT以上共存したキーはtap扱いとする
-                        ) {
-                        cancel_deferred_exec(pending_taps[i].tapping_pending_token);
-                        pending_taps[i].tapping_pending_token = 0;
+                if (pressed_key_count < 2) {
+                    for (i = 0; i < PENDING_TAP_CAPACITY; i++) {
+                        if (i == slot || !pending_taps[i].is_active) continue;
+                        if (pending_taps[i].tapping_pending_token != 0                           // mod-tapキーで、
+                         && pending_taps[i].pressed_time > pending_taps[slot].pressed_time       // このキーより後に押され、
+                         && timer_elapsed(pending_taps[i].pressed_time) > ROLLING_TO_MOD_TIMEOUT // ROLLING_TO_MOD_TIMEOUT以上共存したキーはtap扱いとする
+                            ) {
+                            cancel_deferred_exec(pending_taps[i].tapping_pending_token);
+                            pending_taps[i].tapping_pending_token = 0;
 
-                        uint16_t k  = to_current_layer_keycode_on_slot(i);
-                        uint16_t k2 = tap_hold_get_tap_keycode(k);
-                        register_code_print(k2);
-                        pending_taps[i].is_pending = false;
-                        pending_taps[i].keycode_registerd = k2;
+                            uint16_t k  = to_current_layer_keycode_on_slot(i);
+                            uint16_t k2 = tap_hold_get_tap_keycode(k);
+                            register_code_print(k2);
+                            pending_taps[i].is_pending = false;
+                            pending_taps[i].keycode_registerd = k2;
+                        }
                     }
                 }
 
