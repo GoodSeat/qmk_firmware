@@ -234,7 +234,8 @@ combo_t key_combos[] = {
 static uint16_t keycode_last_tap = 0;
 static uint16_t time_last_tap    = 0;
 
-#define ROLLING_TO_MOD_TIMEOUT 25 // wait time for pending rolling to mod.(ms)
+#define ROLLING_TO_MOD_TIMEOUT 40 // wait time for pending rolling to mod.(ms)
+#define ROLLING_TO_MOD_START  120 // time for activate checking rolling to mod.(ms)
 #define PENDING_TAP_CAPACITY 4
 
 static uint8_t pressed_key_count = 0;
@@ -516,6 +517,7 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
 #endif // KEYMAP_INTROSPECTION_ENABLE -------------------------------------------//
         }
     }
+    keycode_last_tap = 0;
 
     uint8_t slot = 0;
     bool existYounger = false;
