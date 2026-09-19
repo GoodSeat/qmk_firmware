@@ -237,8 +237,6 @@ static uint16_t time_last_tap    = 0;
 #define ROLLING_TO_MOD_TIMEOUT 25 // wait time for pending rolling to mod.(ms)
 #define PENDING_TAP_CAPACITY 4
 
-static bool reversed_keymap = false;
-
 static uint8_t pressed_key_count = 0;
 static uint16_t session_start_time = 0;
 
@@ -537,14 +535,6 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
         xprintf("<%5u> ### ACTIVE SLOT COUNT OVER %u ###\n", time_in_session(), PENDING_TAP_CAPACITY);  //
 #endif // KEYMAP_INTROSPECTION_ENABLE -------------------------------------------------------------------//
         return true;
-    }
-    if (!record->event.pressed && reversed_keymap) { // 押下時のレイヤーに基づくキーコードを再現
-        keycode = pending_taps[slot].keycode;
-        record->keycode = keycode;
-        is_mod_tap_key = (tap_hold_get_tap_keycode(keycode) != keycode);
-#ifdef KEYMAP_INTROSPECTION_ENABLE // ---------------------------------------//
-        xprintf("    reproduced keycode = %s\n", get_keycode_str(keycode));  //
-#endif // KEYMAP_INTROSPECTION_ENABLE ---------------------------------------//
     }
 
     // ------------------------------------------------------------------------------------------------------------------
