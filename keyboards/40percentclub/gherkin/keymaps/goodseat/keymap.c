@@ -166,9 +166,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_LSFT       , KC_LALT       , KC_LGUI       , _______      , _______      , KC_END       , _______      , KC_RGUI        , RALT_T(KC_APP) , KC_RSFT
   ),
   [3] = LAYOUT_ortho_3x10(
-      KC_ESC        , _______       , _______       , _______      , KC_PAUS      , KC_ESC       , KC_GRV       , KC_MINS        , KC_EQL         , KC_BSPC        ,
-      KC_LCTL       , XXXXXXX       , XXXXXXX       , _______      , _______      , KC_HENK      , KC_SPC       , KC_MHEN        , KC_INS         , KC_ENT         ,
-      KC_LSFT       , KC_LALT       , KC_LGUI       , _______      , KC_CAPS      , KC_PSCR      , KC_SCRL      , KC_RGUI        , KC_RALT        , KC_RSFT
+      KC_ESC        , KC_CAPS       , _______       , MS_WHLU      , KC_PAUS      , KC_ESC       , KC_GRV       , KC_MINS        , KC_EQL         , KC_BSPC        ,
+      KC_LCTL       , MS_WHLL       , XXXXXXX       , MS_WHLD      , MS_WHLR      , KC_HENK      , KC_SPC       , KC_MHEN        , KC_INS         , KC_ENT         ,
+      KC_LSFT       , KC_LALT       , KC_LGUI       , MS_BTN1      , MS_BTN2      , KC_PSCR      , KC_SCRL      , KC_RGUI        , KC_RALT        , KC_RSFT
   ),
 
   [4] = LAYOUT_ortho_3x10(
@@ -187,9 +187,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_DEL         , KC_PGDN        , KC_UP          , KC_PGUP      , XXXXXXX      , KC_PAUS      , KC_MUTE      , KC_VOLU       , KC_VOLD       , KC_ESC
   ),
   [7] = LAYOUT_ortho_3x10(
-      KC_RSFT        , KC_RALT        , KC_RGUI        , KC_SCRL      , KC_PSCR      , KC_CAPS      , _______      , KC_LGUI       , KC_LALT       , KC_LSFT       ,
-      KC_ENT         , KC_INS         , KC_MHEN        , KC_SPC       , KC_HENK      , _______      , _______      , XXXXXXX       , XXXXXXX       , KC_LCTL       ,
-      KC_BSPC        , KC_EQL         , KC_MINS        , KC_GRV       , KC_ESC       , KC_PAUS      , _______      , _______       , _______       , KC_ESC
+      KC_RSFT        , KC_RALT        , KC_RGUI        , KC_SCRL      , KC_PSCR      , MS_BTN2      , MS_BTN1      , KC_LGUI       , KC_LALT       , KC_LSFT       ,
+      KC_ENT         , KC_INS         , KC_MHEN        , KC_SPC       , KC_HENK      , MS_WHLR      , MS_WHLD      , XXXXXXX       , MS_WHLL       , KC_LCTL       ,
+      KC_BSPC        , KC_EQL         , KC_MINS        , KC_GRV       , KC_ESC       , KC_PAUS      , MS_WHLU      , _______       , KC_CAPS       , KC_ESC
   ),
 };
 
